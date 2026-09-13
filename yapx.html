@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Macro LLC – Premium Digital Solutions</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Exo+2:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+        /* ── RESET & BASE ── */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* ── HIDE SCROLLBAR GLOBALLY ── */
+        html {
+            scrollbar-width: none !important;
+            overflow-y: scroll;
+        }
+        body {
+            scrollbar-width: none !important;
+        }
+        html::-webkit-scrollbar,
+        body::-webkit-scrollbar,
+        *::-webkit-scrollbar {
+            display: none !important;
+            width: 0 !important;
+            height: 0 !important;
+            background: transparent !important;
+        }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: #120f0b;
+            color: #f0e6d8;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* ── HEADER ── */
+        header {
+            padding: 18px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            background: rgba(18, 15, 11, 0.94);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(212, 163, 115, 0.25);
+            animation: slideDown 0.9s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-100%); }
+            to { transform: translateY(0); }
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .logo-icon {
+            color: #d4a373;
+            font-size: 2.4rem;
+            animation: pulseGold 2.6s infinite;
+        }
+
+        @keyframes pulseGold {
+            0%, 100% { text-shadow: 0 0 6px #d4a373; }
+            50% { text-shadow: 0 0 22px #d4a373, 0 0 40px #b8864b; }
+        }
+
+        .logo h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            font-size: 1.9rem;
+            background: linear-gradient(to right, #f5e6d3, #d4a373, #e8c9a0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(212, 163, 115, 0.25);
+        }
+        .logo h1 span {
+            font-weight: 400;
+            font-size: 0.9rem;
+            background: none;
+            -webkit-text-fill-color: #b8864b;
+            color: #b8864b;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 28px;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            color: #d4c5b0;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1.05rem;
+            transition: all 0.3s ease;
+            padding: 6px 12px;
+            border-radius: 6px;
+            position: relative;
+        }
+
+        nav a:hover {
+            color: #f5e6d3;
+            background: rgba(212, 163, 115, 0.15);
+        }
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: #d4a373;
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+        nav a:hover::after { width: 70%; }
+
+        /* ── HERO ── */
+        .hero {
+            padding: 170px 0 90px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 30% 50%, rgba(212, 163, 115, 0.13) 0%, transparent 55%);
+            z-index: 0;
+        }
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.4rem;
+            font-weight: 900;
+            margin-bottom: 18px;
+            background: linear-gradient(to right, #f5e6d3, #d4a373, #f0d5b0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: glowGold 3.4s infinite alternate;
+        }
+
+        @keyframes glowGold {
+            from { text-shadow: 0 0 12px rgba(212, 163, 115, 0.4), 0 0 24px rgba(212, 163, 115, 0.15); }
+            to { text-shadow: 0 0 28px rgba(212, 163, 115, 0.7), 0 0 50px rgba(212, 163, 115, 0.3), 0 0 70px rgba(212, 163, 115, 0.1); }
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            margin-bottom: 36px;
+            color: #d4c5b0;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(to right, #d4a373, #b8864b);
+            color: #120f0b;
+            padding: 16px 44px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 28px rgba(212, 163, 115, 0.3);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        .cta-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 16px 40px rgba(212, 163, 115, 0.45);
+        }
+        .cta-button::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to right, #e8c9a0, #d4a373);
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .cta-button:hover::after { opacity: 1; }
+
+        /* ── SECTION TITLE ── */
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.4rem;
+            font-weight: 800;
+            color: #d4a373;
+            position: relative;
+        }
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -14px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 110px;
+            height: 4px;
+            background: linear-gradient(to right, transparent, #d4a373, transparent);
+            border-radius: 4px;
+        }
+
+        /* ── PRODUCTS / SERVICES ── */
+        .products {
+            padding: 80px 0;
+            background: rgba(26, 20, 16, 0.6);
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 36px;
+            margin-top: 40px;
+        }
+
+        .product-card {
+            background: rgba(30, 24, 20, 0.85);
+            border-radius: 18px;
+            padding: 32px 28px;
+            box-shadow: 0 10px 32px rgba(0, 0, 0, 0.5);
+            transition: all 0.4s ease;
+            border: 1px solid rgba(212, 163, 115, 0.15);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(4px);
+        }
+        .product-card:hover {
+            transform: translateY(-12px);
+            box-shadow: 0 20px 48px rgba(212, 163, 115, 0.15);
+            border-color: rgba(212, 163, 115, 0.4);
+        }
+        .product-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(to right, #b8864b, #d4a373, #e8c9a0);
+        }
+        .product-icon {
+            font-size: 2.8rem;
+            color: #d4a373;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .product-card h3 {
+            font-size: 1.6rem;
+            margin-bottom: 12px;
+            color: #f0d5b0;
+            text-align: center;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+        }
+        .product-card p {
+            color: #d4c5b0;
+            margin-bottom: 16px;
+            text-align: center;
+            font-size: 0.98rem;
+        }
+        .feature-list {
+            list-style: none;
+            margin-top: 18px;
+        }
+        .feature-list li {
+            padding: 6px 0;
+            color: #d4c5b0;
+            position: relative;
+            padding-left: 28px;
+            font-size: 0.95rem;
+        }
+        .feature-list li::before {
+            content: '✦';
+            position: absolute;
+            left: 0;
+            color: #d4a373;
+            font-weight: bold;
+        }
+
+        .service-badge {
+            display: inline-block;
+            background: rgba(212, 163, 115, 0.18);
+            color: #d4a373;
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 2px 14px;
+            border-radius: 20px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            border: 1px solid rgba(212, 163, 115, 0.2);
+        }
+
+        .price-tag {
+            display: inline-block;
+            background: rgba(184, 134, 75, 0.2);
+            color: #f0d5b0;
+            font-size: 0.9rem;
+            font-weight: 600;
+            padding: 4px 16px;
+            border-radius: 20px;
+            margin-top: 8px;
+            border: 1px solid rgba(212, 163, 115, 0.2);
+        }
+        .price-tag.free {
+            color: #8bc34a;
+            border-color: rgba(139, 195, 74, 0.3);
+            background: rgba(139, 195, 74, 0.1);
+        }
+
+        /* ── TIERS ── */
+        .tier-price {
+            text-align: center;
+            margin-top: 22px;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #d4a373;
+            padding: 12px 0;
+            border-top: 2px dashed rgba(212, 163, 115, 0.25);
+        }
+        .tier-price small {
+            font-size: 1rem;
+            font-weight: 400;
+            color: #b8864b;
+        }
+
+        .tier-badge {
+            display: inline-block;
+            background: linear-gradient(to right, #d4a373, #b8864b);
+            color: #120f0b;
+            font-weight: 700;
+            padding: 4px 18px;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+        .tier-badge.pro {
+            background: linear-gradient(to right, #f0d5b0, #d4a373);
+        }
+
+        /* ── PROTOCOL MESSAGE ── */
+        .protocol-message {
+            padding: 70px 0;
+            text-align: center;
+            background: rgba(212, 163, 115, 0.04);
+            position: relative;
+            overflow: hidden;
+        }
+        .protocol-message::before {
+            content: '';
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(212, 163, 115, 0.07) 0%, transparent 70%);
+            top: 50%;
+            left: 5%;
+            transform: translateY(-50%);
+        }
+        .protocol-message::after {
+            content: '';
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(212, 163, 115, 0.05) 0%, transparent 70%);
+            bottom: 10%;
+            right: 8%;
+        }
+        .protocol-text {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.6rem;
+            font-weight: 900;
+            background: linear-gradient(to right, #f5e6d3, #d4a373, #b8864b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(212, 163, 115, 0.2);
+            animation: textGlowWarm 4.8s infinite alternate;
+            position: relative;
+            z-index: 2;
+        }
+        @keyframes textGlowWarm {
+            0%, 100% { text-shadow: 0 0 14px rgba(212, 163, 115, 0.4), 0 0 30px rgba(212, 163, 115, 0.15); }
+            50% { text-shadow: 0 0 28px rgba(212, 163, 115, 0.6), 0 0 50px rgba(212, 163, 115, 0.25), 0 0 70px rgba(184, 134, 75, 0.1); }
+        }
+
+        /* ── APPLICATION ── */
+        .application {
+            padding: 80px 0;
+            text-align: center;
+        }
+        .application p {
+            max-width: 700px;
+            margin: 0 auto 36px;
+            font-size: 1.15rem;
+            color: #d4c5b0;
+        }
+
+        .form-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 14px;
+            background: linear-gradient(to right, #d4a373, #b8864b);
+            color: #120f0b;
+            padding: 18px 48px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.25rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 28px rgba(212, 163, 115, 0.3);
+            margin-top: 10px;
+        }
+        .form-link:hover {
+            transform: translateY(-5px) scale(1.03);
+            box-shadow: 0 16px 40px rgba(212, 163, 115, 0.45);
+        }
+
+        .app-process {
+            margin-top: 48px;
+            padding: 28px 32px;
+            background: rgba(212, 163, 115, 0.06);
+            border-radius: 18px;
+            border-left: 5px solid #d4a373;
+            text-align: left;
+        }
+        .app-process h3 {
+            color: #f0d5b0;
+            margin-bottom: 14px;
+            font-size: 1.3rem;
+        }
+        .app-process p {
+            color: #d4c5b0;
+            font-size: 1rem;
+            line-height: 1.8;
+            max-width: 100%;
+        }
+        .app-process strong { color: #e8c9a0; }
+
+        /* ── FOOTER ── */
+        footer {
+            background: rgba(14, 11, 8, 0.96);
+            padding: 50px 0 28px;
+            border-top: 1px solid rgba(212, 163, 115, 0.15);
+        }
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 36px;
+            margin-bottom: 32px;
+        }
+        .footer-logo { flex: 1; min-width: 230px; }
+        .footer-logo h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.7rem;
+            margin-bottom: 12px;
+            color: #d4a373;
+        }
+        .footer-logo p { color: #d4c5b0; max-width: 300px; font-size: 0.95rem; }
+        .footer-contact { flex: 1; min-width: 220px; }
+        .footer-contact h4 { font-size: 1.3rem; margin-bottom: 16px; color: #f0d5b0; }
+        .contact-info { list-style: none; }
+        .contact-info li {
+            margin-bottom: 10px;
+            color: #d4c5b0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.95rem;
+        }
+        .contact-info li i { color: #d4a373; width: 22px; }
+        .copyright {
+            text-align: center;
+            padding-top: 24px;
+            border-top: 1px solid rgba(212, 163, 115, 0.08);
+            color: #b8a892;
+            font-size: 0.9rem;
+        }
+        .copyright p { margin-top: 6px; font-size: 0.8rem; color: #8a7a6a; }
+
+        /* ── BACK TO MACRO ── */
+        .back-to-macro {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 9999;
+            background: linear-gradient(to right, #d4a373, #b8864b);
+            color: #120f0b;
+            padding: 14px 30px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.05rem;
+            text-decoration: none;
+            box-shadow: 0 8px 24px rgba(212, 163, 115, 0.3);
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(6px);
+        }
+        .back-to-macro:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 14px 36px rgba(212, 163, 115, 0.5);
+            background: linear-gradient(to right, #e8c9a0, #d4a373);
+        }
+        .back-to-macro i { font-size: 1rem; }
+
+        /* ── ANIMATIONS ── */
+        .floating { animation: floating 3.2s ease-in-out infinite; }
+        @keyframes floating {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-14px); }
+        }
+        .rotate { animation: rotate 22s linear infinite; }
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .network-animation {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 0;
+            opacity: 0.25;
+            pointer-events: none;
+        }
+        .node {
+            position: absolute;
+            width: 7px;
+            height: 7px;
+            background-color: #d4a373;
+            border-radius: 50%;
+            box-shadow: 0 0 12px #d4a373;
+        }
+        .connection {
+            position: absolute;
+            height: 2px;
+            background: linear-gradient(to right, transparent, #d4a373, transparent);
+            transform-origin: left center;
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 992px) {
+            .hero h2 { font-size: 2.8rem; }
+            .protocol-text { font-size: 2rem; }
+        }
+
+        @media (max-width: 768px) {
+            .header-content { flex-direction: column; gap: 14px; }
+            .hero { padding: 150px 0 60px; }
+            .hero h2 { font-size: 2.2rem; }
+            .hero p { font-size: 1rem; }
+            .section-title { font-size: 1.9rem; }
+            .protocol-text { font-size: 1.5rem; }
+            .products-grid { grid-template-columns: 1fr; }
+            .footer-content { flex-direction: column; }
+            .back-to-macro { bottom: 16px; right: 16px; padding: 12px 22px; font-size: 0.95rem; }
+            nav ul { justify-content: center; gap: 12px; }
+            nav a { font-size: 0.9rem; padding: 4px 10px; }
+            .logo h1 { font-size: 1.5rem; }
+            .app-process { padding: 20px; }
+        }
+
+        @media (max-width: 480px) {
+            .hero h2 { font-size: 1.8rem; }
+            .cta-button { padding: 14px 30px; font-size: 1rem; }
+            .form-link { padding: 14px 28px; font-size: 1rem; }
+            .product-card { padding: 24px 18px; }
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ═══ HEADER ═══ -->
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-mug-hot"></i>
+                </div>
+                <h1>Macro <span>LLC</span></h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#services">Services</a></li>
+                    <li><a href="#tiers">Tiers</a></li>
+                    <li><a href="#application">Apply</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- ═══ HERO ═══ -->
+    <section class="hero" id="home">
+        <div class="network-animation" id="networkCanvas"></div>
+        <div class="container hero-content">
+            <h2>Undetectable Digital Solutions</h2>
+            <p>Experience next‑generation privacy, digital enhancement, and creative tools — engineered with Swiss precision, hosted in ultra‑secure UAE data centers, and wrapped in the Macro promise of quality.</p>
+            <a href="#application" class="cta-button floating">
+                <i class="fas fa-rocket"></i> Apply Now
+            </a>
+        </div>
+    </section>
+
+    <!-- ═══ SERVICES ═══ -->
+    <section class="products" id="services">
+        <div class="container">
+            <h2 class="section-title">Our Exclusive Services</h2>
+            <div class="products-grid">
+
+                <div class="product-card reveal">
+                    <div class="product-icon"><i class="fas fa-wifi"></i></div>
+                    <span class="service-badge">Core</span>
+                    <h3>WiFi Pass Services</h3>
+                    <p>Unlock premium WiFi access worldwide with our proprietary pass technology</p>
+                    <ul class="feature-list">
+                        <li>Global network access</li>
+                        <li>High‑speed encrypted tunnels</li>
+                        <li>Automatic network detection</li>
+                        <li>24/7 technical support</li>
+                    </ul>
+                    <div class="price-tag free">Included in Free Tier</div>
+                </div>
+
+                <div class="product-card reveal">
+                    <div class="product-icon"><i class="fas fa-graduation-cap"></i></div>
+                    <span class="service-badge">Educational</span>
+                    <h3>ReadTheory MAX</h3>
+                    <p>Advanced level optimization for the ReadTheory platform</p>
+                    <ul class="feature-list">
+                        <li>Automated level maximization</li>
+                        <li>Intelligent answer algorithms</li>
+                        <li>Progress acceleration</li>
+                        <li>Stealth mode operation</li>
+                    </ul>
+                    <div class="price-tag">Pro Tier</div>
+                </div>
+
+                <div class="product-card reveal">
+                    <div class="product-icon"><i class="fas fa-book"></i></div>
+                    <span class="service-badge">Academic</span>
+                    <h3>Homework Completion</h3>
+                    <p>AI‑assisted homework solutions across all subjects &amp; levels</p>
+                    <ul class="feature-list">
+                        <li>Full homework solutions delivered fast</li>
+                        <li>Multi‑subject expertise</li>
+                        <li>Plagiarism‑free guarantee</li>
+                        <li>24/7 expert review &amp; revisions</li>
+                    </ul>
+                    <div class="price-tag">Pro Tier</div>
+                </div>
+
+                <div class="product-card reveal">
+                    <div class="product-icon"><i class="fas fa-laptop-code"></i></div>
+                    <span class="service-badge">Development</span>
+                    <h3>Website Creation</h3>
+                    <p>Professional custom websites with secure UAE hosting</p>
+                    <ul class="feature-list">
+                        <li>Full custom design &amp; development</li>
+                        <li>Responsive, mobile‑ready &amp; SEO</li>
+                        <li>Secure UAE/Swiss‑hosted infrastructure</li>
+                        <li>Ongoing maintenance &amp; updates</li>
+                    </ul>
+                    <div class="price-tag">Pro Tier</div>
+                </div>
+
+                <div class="product-card reveal" style="border-color:rgba(212,163,115,0.35);">
+                    <div class="product-icon"><i class="fas fa-shield-halved"></i></div>
+                    <span class="service-badge" style="background:rgba(212,163,115,0.3);color:#f0d5b0;">New</span>
+                    <h3>Pen VPN</h3>
+                    <p>Ultra‑private, low‑latency VPN with multi‑hop encryption and no logs</p>
+                    <ul class="feature-list">
+                        <li>Military‑grade encryption</li>
+                        <li>Global server network</li>
+                        <li>Zero‑logging policy</li>
+                        <li>Kill‑switch &amp; DNS leak protection</li>
+                    </ul>
+                    <div class="price-tag">Pro Tier</div>
+                </div>
+
+                <div class="product-card reveal" style="border-color:rgba(212,163,115,0.35);">
+                    <div class="product-icon"><i class="fas fa-cubes"></i></div>
+                    <span class="service-badge" style="background:rgba(212,163,115,0.3);color:#f0d5b0;">New</span>
+                    <h3>3D Printer Services</h3>
+                    <p>High‑quality 3D printing — from prototypes to finished products</p>
+                    <ul class="feature-list">
+                        <li>Professional‑grade printers</li>
+                        <li>Wide material selection</li>
+                        <li>Fast turnaround</li>
+                        <li><strong style="color:#d4a373;">Free for Pro users</strong></li>
+                    </ul>
+                    <div class="price-tag">1 AED / 2 hours</div>
+                    <div style="text-align:center;margin-top:6px;font-size:0.85rem;color:#8bc34a;">★ Free for Pro members</div>
+                </div>
+
+                <div class="product-card reveal" style="border-color:rgba(212,163,115,0.35);">
+                    <div class="product-icon"><i class="fas fa-headset"></i></div>
+                    <span class="service-badge" style="background:rgba(212,163,115,0.3);color:#f0d5b0;">New</span>
+                    <h3>Tech Support Services</h3>
+                    <p><em style="color:#f0d5b0;">"We will always help you with anything."</em></p>
+                    <ul class="feature-list">
+                        <li>24/7 live support</li>
+                        <li>Hardware &amp; software troubleshooting</li>
+                        <li>Remote assistance</li>
+                        <li>Priority response for Pro members</li>
+                    </ul>
+                    <div class="price-tag free">Included in Free &amp; Pro</div>
+                </div>
+
+                <div class="product-card reveal" style="border-color:rgba(212,163,115,0.35);">
+                    <div class="product-icon"><i class="fas fa-microchip"></i></div>
+                    <span class="service-badge" style="background:rgba(212,163,115,0.3);color:#f0d5b0;">New</span>
+                    <h3>Crypto Mining Services</h3>
+                    <p>Turn‑key mining operations with optimized hardware and green energy</p>
+                    <ul class="feature-list">
+                        <li>High‑efficiency ASIC/GPU mining</li>
+                        <li>Managed hosting &amp; maintenance</li>
+                        <li>Real‑time dashboard &amp; payouts</li>
+                        <li>Scalable from 1 to 100+ rigs</li>
+                    </ul>
+                    <div class="price-tag">Custom Pricing</div>
+                    <div style="text-align:center;margin-top:6px;font-size:0.85rem;color:#d4a373;">Contact for enterprise quotes</div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ MEMBERSHIP TIERS ═══ -->
+    <section class="products" id="tiers" style="background:rgba(18,15,11,0.8);">
+        <div class="container">
+            <h2 class="section-title">Membership Tiers</h2>
+            <div class="products-grid">
+
+                <div class="product-card reveal">
+                    <div class="product-icon"><i class="fas fa-gift"></i></div>
+                    <span class="tier-badge">Free</span>
+                    <h3>Free Tier</h3>
+                    <p>Basic access — perfect for trying our core services</p>
+                    <ul class="feature-list">
+                        <li>WiFi Pass Services</li>
+                        <li>Tech Support (basic)</li>
+                        <li>Community access</li>
+                        <li>No advanced tools</li>
+                    </ul>
+                    <div class="tier-price">Free</div>
+                    <p style="text-align:center;color:#d4c5b0;font-size:1rem;">0 AED / month</p>
+                    <p style="text-align:center;margin-top:6px;color:#8bc34a;font-size:0.9rem;">No payment required</p>
+                </div>
+
+                <div class="product-card reveal" style="border-color:rgba(212,163,115,0.4);box-shadow:0 0 40px rgba(212,163,115,0.08);">
+                    <div class="product-icon"><i class="fas fa-crown"></i></div>
+                    <span class="tier-badge pro">Pro</span>
+                    <h3>Pro Tier</h3>
+                    <p>Full access — everything unlocked, including <strong style="color:#d4a373;">free 3D printing</strong></p>
+                    <ul class="feature-list">
+                        <li>WiFi Pass Services</li>
+                        <li>ReadTheory MAX</li>
+                        <li>Homework Completion Service</li>
+                        <li>Website Creation Service</li>
+                        <li><strong>Pen VPN</strong></li>
+                        <li><strong>3D Printer Services</strong> <span style="color:#8bc34a;font-size:0.8rem;">(free!)</span></li>
+                        <li><strong>Tech Support</strong> (priority)</li>
+                        <li><strong>Crypto Mining Services</strong> (consultation included)</li>
+                        <li>Unlimited usage &amp; custom requests</li>
+                        <li>Premium 24/7 support</li>
+                    </ul>
+                    <div class="tier-price">5 AED <small>/ month</small></div>
+                    <p style="text-align:center;color:#d4c5b0;font-size:1rem;">5 AED / month</p>
+                    <p style="text-align:center;margin-top:6px;color:#d4a373;font-size:0.9rem;">✦ IRL payment required upon approval</p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ PROTOCOL MESSAGE ═══ -->
+    <section class="protocol-message">
+        <div class="container">
+            <div class="protocol-text">
+                <span class="rotate">☕</span> AGENT PEN WASN'T A PEN <span class="rotate">⚡</span><br />
+                IT WAS A PROTOCOL <span class="rotate">🌐</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ APPLICATION ═══ -->
+    <section class="application" id="application">
+        <div class="container">
+            <h2 class="section-title">Apply for Services</h2>
+            <p>To access Macro LLC's exclusive digital solutions, complete our secure application form. Our team will review your submission, confirm your chosen tier, and provide access credentials within 24–48 hours.</p>
+
+            <a href="https://forms.gle/gv21WkAgd2ZdmBrA6" target="_blank" class="form-link">
+                <i class="fab fa-google"></i> Access Application Form
+            </a>
+
+            <div class="app-process">
+                <h3><i class="fas fa-info-circle" style="color:#d4a373;"></i> Application Process</h3>
+                <p>
+                    1. Click the button above to access our secure Google Form<br />
+                    2. Complete all required fields with accurate information<br />
+                    3. Specify your desired membership tier (<strong>Free</strong> or <strong>Pro</strong>) and select the services you're applying for<br />
+                    4. Submit the form and await confirmation email<br />
+                    5. Receive your access credentials within 24–48 hours<br />
+                    <strong style="color:#d4a373;">Note:</strong> Pro tier requires IRL payment (5 AED/month) upon approval.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ FOOTER ═══ -->
+    <footer id="contact">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <h3><i class="fas fa-mug-hot" style="color:#d4a373;margin-right:8px;"></i>Macro LLC</h3>
+                    <p>Cutting‑edge digital solutions with Swiss engineering and UAE hosting. Privacy, quality, and access — always.</p>
+                    <div style="margin-top:18px;font-size:1.6rem;color:#d4a373;letter-spacing:8px;">
+                        <i class="fas fa-shield-halved"></i>
+                        <i class="fas fa-server"></i>
+                        <i class="fas fa-lock"></i>
+                        <i class="fas fa-cubes"></i>
+                    </div>
+                </div>
+                <div class="footer-contact">
+                    <h4>Contact &amp; Info</h4>
+                    <ul class="contact-info">
+                        <li><i class="fas fa-globe"></i> Hosted in UAE</li>
+                        <li><i class="fas fa-cogs"></i> Engineered in Switzerland</li>
+                        <li><i class="fas fa-envelope"></i> Applications via Google Form</li>
+                        <li><i class="fas fa-shield-halved"></i> 256‑bit end‑to‑end encryption</li>
+                        <li><i class="fas fa-headset"></i> 24/7 Tech Support</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2026 Macro LLC. All rights reserved. &nbsp;|&nbsp; Secure Digital Solutions</p>
+                <p>"Agent Pen" is a proprietary protocol developed by Macro LLC research division.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ═══ BACK TO MACRO (FIXED) ═══ -->
+    <a href="index.html" class="back-to-macro" title="Back to Macro">
+        <i class="fas fa-arrow-left"></i> Back to Macro
+    </a>
+
+    <!-- ═══ SCRIPTS ═══ -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const canvas = document.getElementById('networkCanvas');
+            const nodes = [];
+            const connections = [];
+
+            for (let i = 0; i < 16; i++) {
+                const node = document.createElement('div');
+                node.className = 'node';
+                node.style.left = (Math.random() * 100) + '%';
+                node.style.top = (Math.random() * 100) + '%';
+                node.style.animationDelay = (Math.random() * 3) + 's';
+                node.style.animation = 'floating ' + (3.5 + Math.random() * 4) + 's ease-in-out infinite';
+                canvas.appendChild(node);
+                nodes.push(node);
+            }
+
+            for (let i = 0; i < nodes.length; i++) {
+                for (let j = i + 1; j < nodes.length; j++) {
+                    const n1 = nodes[i], n2 = nodes[j];
+                    const x1 = parseFloat(n1.style.left), y1 = parseFloat(n1.style.top);
+                    const x2 = parseFloat(n2.style.left), y2 = parseFloat(n2.style.top);
+                    const dist = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+                    if (dist < 28) {
+                        const conn = document.createElement('div');
+                        conn.className = 'connection';
+                        const len = dist;
+                        const ang = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
+                        conn.style.width = len + '%';
+                        conn.style.left = x1 + '%';
+                        conn.style.top = y1 + '%';
+                        conn.style.transform = 'rotate(' + ang + 'deg)';
+                        conn.style.opacity = 0.25 + Math.random() * 0.45;
+                        canvas.appendChild(conn);
+                        connections.push(conn);
+                    }
+                }
+            }
+
+            function animateConns() {
+                connections.forEach(c => {
+                    const next = 0.25 + 0.45 * Math.abs(Math.sin(Date.now() / 1200 + parseFloat(c.style.left) * 2));
+                    c.style.opacity = next;
+                });
+                requestAnimationFrame(animateConns);
+            }
+            animateConns();
+
+            document.querySelectorAll('nav a').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    const href = this.getAttribute('href');
+                    if (href && href.startsWith('#')) {
+                        e.preventDefault();
+                        const target = document.querySelector(href);
+                        if (target) {
+                            window.scrollTo({
+                                top: target.offsetTop - 80,
+                                behavior: 'smooth'
+                            });
+                        }
+                    }
+                });
+            });
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.12, rootMargin: '0px 0px -30px 0px' });
+
+            document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+            const proto = document.querySelector('.protocol-text');
+            let angle = 0;
+            function floatProto() {
+                angle += 0.008;
+                proto.style.transform = 'translateY(' + (Math.sin(angle) * 10) + 'px)';
+                requestAnimationFrame(floatProto);
+            }
+            floatProto();
+        });
+    </script>
+
+</body>
+</html>
