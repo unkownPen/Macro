@@ -1,0 +1,22 @@
+Cine-OS Software License Agreement
+
+Copyright © 2026 Cine-OS. All rights reserved.
+
+This Software, including but not limited to its source code, design, functionality, structure, and associated content (collectively, the “Software”), is the exclusive intellectual property of Cine-OS and is protected under applicable copyright and intellectual property laws, including the United States Copyright Act.
+
+Subject to the terms of this Agreement, a limited, non-exclusive, non-transferable, and revocable license is granted solely for personal, non-commercial viewing and use of the Software.
+
+Except as expressly permitted, you shall not, directly or indirectly:
+
+- Copy, reproduce, distribute, republish, or transmit the Software in any form or by any means  
+- Modify, adapt, translate, reverse engineer, decompile, or create derivative works based on the Software  
+- Mirror, frame, scrape, or otherwise replicate the Software on any server, platform, or service  
+- Exploit the Software, in whole or in part, for any commercial purpose  
+
+Any unauthorized use of the Software constitutes a violation of this Agreement and may result in civil and/or criminal liability under applicable law.
+
+Cine-OS reserves all rights not expressly granted herein. This license may be terminated at any time without notice if its terms are violated.
+
+Violations may be subject to enforcement actions, including but not limited to takedown requests pursuant to the Digital Millennium Copyright Act (DMCA) and pursuit of legal remedies.
+
+By accessing or using the Software, you acknowledge that you have read, understood, and agree to be bound by the terms of this Agreement.
