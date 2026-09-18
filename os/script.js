@@ -192,8 +192,7 @@ function openDockCtx(e, id) {
 }
 
 function openDrawerCtx(e, id) {
-    e.preventDefault(); 
-  e.stopPropagation();
+    e.preventDefault(); e.stopPropagation();
     hideAllCtx();
     activeCtxId = id;
     let m = document.getElementById('drawer-ctx-menu');
