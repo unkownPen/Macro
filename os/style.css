@@ -1,14 +1,9 @@
-@font-face {
-    font-family: 'Azonix';
-    src: url('https://db.onlinewebfonts.com/t/04e1f7fb2b58d60eb24df50a9807fa36.woff2') format('woff2');
-}
-
 :root {
     --glass-bg: rgba(20, 20, 20, 0.6);
     --glass-border: #333;
     --accent-main: #fff;
     --font-main: 'Rajdhani', sans-serif;
-    --font-header: 'Azonix', 'Orbitron', sans-serif;
+    --font-header: 'Orbitron', sans-serif;
     --z-bg: 0;
     --z-snow: 1;
     --z-desktop: 10;
@@ -210,7 +205,7 @@ body {
     to { opacity: 1; transform: translateY(0); }
 }
 
-.l-day { font-family: 'Azonix', sans-serif; font-size: 5rem; letter-spacing: 12px; color: #fff; margin: 0 0 10px 0; text-transform: uppercase; font-weight: normal; }
+.l-day { font-family: 'Orbitron', sans-serif; font-size: 5rem; letter-spacing: 12px; color: #fff; margin: 0 0 10px 0; text-transform: uppercase; font-weight: normal; }
 .l-date { font-family: var(--font-main); font-size: 1.3rem; letter-spacing: 4px; font-weight: 700; color: #fff; margin-bottom: 8px; text-transform: uppercase; }
 .l-time { font-family: var(--font-main); font-size: 1.1rem; letter-spacing: 3px; font-weight: 700; color: #fff; }
 
@@ -225,7 +220,7 @@ body {
     text-shadow: 0 10px 40px rgba(0,0,0,0.8);
 }
 
-.hud-day { font-family: 'Azonix', sans-serif; font-size: 3rem; color: rgba(255,255,255,0.7); letter-spacing: 10px; text-transform: uppercase; }
+.hud-day { font-family: 'Orbitron', sans-serif; font-size: 3rem; color: rgba(255,255,255,0.7); letter-spacing: 10px; text-transform: uppercase; }
 
 #right-sidebar {
     position: fixed;
