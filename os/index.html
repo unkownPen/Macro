@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Macro-OS V1</title>
+  <title>Creamo-OS V1</title>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@900&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" defer></script>
@@ -28,9 +28,9 @@
 
 <section id="boot-layer" aria-label="System Boot Sequence">
   <div id="boot-content">
-    <h1 class="boot-logo">MACRO-OS</h1>
+    <h1 class="boot-logo">CREAMO-OS</h1>
     <p class="boot-sub">Cine-Hub Softwares // V1</p>
-    <button id="boot-btn" onclick="startBootSequence()" tabindex="1">Enter MACRO</button>
+    <button id="boot-btn" onclick="startBootSequence()" tabindex="1">Enter CREAMO</button>
     <div class="boot__hint">Double-Tap ENTER to skip sequence</div>
   </div>
   <video id="boot-video" playsinline aria-hidden="true"><source src="Videos/Boot.mp4" type="video/mp4"></video>
@@ -144,7 +144,7 @@
       <div class="user-avatar"><i class="fas fa-user" aria-hidden="true"></i></div>
       <span class="user-role">Administrator</span>
     </div>
-    <i class="fas fa-power-off power-btn" role="button" tabindex="0" onclick="window.location.href='../index.html'" aria-label="Back to Macro"></i>
+    <i class="fas fa-power-off power-btn" role="button" tabindex="0" onclick="location.reload()" aria-label="Restart OS"></i>
   </footer>
 </aside>
 
@@ -255,3 +255,121 @@
       <svg id="icon-pause" class="visible-svg" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
     </button>
     <button class="ctrl-btn" id="skip-forward" title="Skip 15s" aria-label="Fast Forward">
+      <svg viewBox="0 0 24 24"><path d="M11.5 8c-4.35 0-7.98 2.9-9.98 7.22l2.37.78c1.05-3.19 4.06-5.5 7.6-5.5 1.95 0 3.73.72 5.12 1.88L13 16h9V7l-3.6 3.6c-1.84-1.61-4.24-2.6-6.9-2.6z"/></svg>
+    </button>
+  </nav>
+</aside>
+
+<dialog id="update-modal" class="modal__backdrop" aria-modal="true">
+  <article class="modal__content">
+    <h2 class="modal__header">UPDATE LOG v3.0</h2>
+    <ul class="modal__list">
+      <li>Added Right Sidebar for quick game & music access.</li>
+      <li>Dynamic image-based lock screen days.</li>
+      <li>Smooth slide-out lock screen animations.</li>
+      <li>Fixed desktop folder expansion physics.</li>
+      <li>Wallpaper engine now fully supports PNG, MOV, and MP4.</li>
+      <li>Added Taskbar Pin/Unpin capability for all apps.</li>
+    </ul>
+    <button class="modal__btn" onclick="document.getElementById('update-modal').style.display='none'">Dismiss</button>
+  </article>
+</dialog>
+
+<template id="code-settings">
+  <dialog id="faq-modal" class="modal__backdrop">
+    <div class="faq-box">
+      <header class="faq-header">
+        <h2>SYSTEM FAQ</h2>
+        <i class="fas fa-times faq-close" role="button" tabindex="0" onclick="toggleFaq()"></i>
+      </header>
+      <article class="faq-item">
+        <h3>MOVIE NOT WORKING!</h3>
+        <p>If the movies do not work for you, open the Browser app, click on Ultraviolet, and search for anything. This will fix the issue. Go back to Movies and they should play!</p>
+      </article>
+      <article class="faq-item">
+        <h3>TOO MANY GAMES</h3>
+        <p>If you downloaded too many games and want to start fresh, open a new tab in your normal browser, press Ctrl + H, and clear your cache. This resets your saved data so you can start over.</p>
+      </article>
+    </div>
+  </dialog>
+  
+  <h2 class="config__main-header">SYSTEM CONFIG</h2>
+  
+  <section class="config__category"><i class="fas fa-microchip"></i> PERFORMANCE</section>
+  
+  <div class="config__card">
+    <div class="config__info">
+      <i class="fas fa-film config__icon"></i>
+      <div class="config__text"><strong>Optimized Background</strong><small>Disables video background to save resources</small></div>
+    </div>
+    <label class="switch"><input type="checkbox" id="chk-bg" onchange="window.parent.updateSysSetting('optBg',this.checked)"><span class="slider"></span></label>
+  </div>
+  
+  <div class="config__card">
+    <div class="config__info">
+      <i class="fas fa-bolt config__icon"></i>
+      <div class="config__text"><strong>Fast Boot</strong><small>Skips the startup sequence</small></div>
+    </div>
+    <label class="switch"><input type="checkbox" id="chk-boot" onchange="window.parent.updateSysSetting('shortBoot',this.checked)"><span class="slider"></span></label>
+  </div>
+  
+  <div class="config__card">
+    <div class="config__info">
+      <i class="fas fa-lock config__icon"></i>
+      <div class="config__text"><strong>Idle Lock Screen</strong><small>Locks system when away for 3 minutes</small></div>
+    </div>
+    <label class="switch"><input type="checkbox" id="chk-idle" onchange="window.parent.updateSysSetting('idleLock',this.checked)"><span class="slider"></span></label>
+  </div>
+  
+  <div class="config__card">
+    <div class="config__info">
+      <i class="fas fa-shield-alt config__icon"></i>
+      <div class="config__text"><strong>Redirect Confirmation</strong><small>Helps protect against GoGuardian</small></div>
+    </div>
+    <label class="switch"><input type="checkbox" id="chk-redir" onchange="window.parent.updateSysSetting('redirectConfirm',this.checked)"><span class="slider"></span></label>
+  </div>
+
+  <section class="config__category"><i class="fas fa-user-secret"></i> CLOAKING & STEALTH</section>
+  
+  <div class="config__card">
+    <div class="config__info">
+      <i class="fas fa-mask config__icon"></i>
+      <div class="config__text"><strong>Tab Cloak</strong><small>Disguises the OS tab name and icon</small></div>
+    </div>
+    <select class="config__select" id="cloak-select" onchange="window.parent.updateCloak(this.value)">
+      <option value="none">None (Creamo-OS)</option>
+      <option value="google">Google</option>
+      <option value="drive">Google Drive</option>
+      <option value="canvas">Canvas</option>
+      <option value="classroom">Google Classroom</option>
+    </select>
+  </div>
+
+  <section class="config__category"><i class="fas fa-keyboard"></i> SHORTCUTS & LINKS</section>
+  
+  <div class="config__card">
+    <div class="config__info">
+      <i class="fas fa-exclamation-triangle config__icon"></i>
+      <div class="config__text"><strong>Panic Key</strong><small>Quick close tab key</small></div>
+    </div>
+    <input type="text" id="panic-input" class="config__input-sm" maxlength="1" onkeyup="window.parent.updateSysSetting('panicKey',this.value)">
+  </div>
+  
+  <div class="config__card config__card--clickable" onclick="window.open('https://discord.gg/bQCRJgtC74','_blank')" role="button" tabindex="0">
+    <div class="config__info">
+      <i class="fab fa-discord config__icon"></i>
+      <div class="config__text"><strong>Join Discord</strong><small>Official Community Hub</small></div>
+    </div>
+  </div>
+  
+  <div class="config__card config__card--clickable" onclick="toggleFaq()" role="button" tabindex="0">
+    <div class="config__info">
+      <i class="fas fa-question-circle config__icon"></i>
+      <div class="config__text"><strong>System FAQ</strong><small>Troubleshooting & Help</small></div>
+    </div>
+  </div>
+</template>
+
+<script src="script.js"></script>
+</body>
+</html>
