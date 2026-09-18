@@ -812,6 +812,14 @@ html, body {
 .field small a { color: var(--accent-3); text-decoration: none; }
 .field small a:hover { text-decoration: underline; }
 
+.field-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+}
+
+.field-row > * { flex: 1; }
+
 .section-header {
     font-size: 11px;
     font-weight: 800;
@@ -1002,7 +1010,7 @@ html, body {
                 <button class="mode-tab active" data-mode="chat" onclick="setMediaMode('chat')">💬 Chat</button>
                 <button class="mode-tab" data-mode="image" onclick="setMediaMode('image')">🎨 Image</button>
                 <button class="mode-tab" data-mode="video" onclick="setMediaMode('video')">🎬 Video</button>
-                <button class="mode-tab" data-mode="music" onclick="setMediaMode('music')">🎵 Music</button>
+                <button class="mode-tab" data-mode="tts" onclick="setMediaMode('tts')">🎙️ TTS</button>
             </div>
 
             <button class="topbar-btn" id="search-toggle" onclick="toggleSearch()" title="Web search">🌐</button>
@@ -1028,22 +1036,28 @@ html, body {
     <div class="modal">
         <button class="modal-close" onclick="closeSettings()">✕</button>
         <h2>⚙️ Settings</h2>
-        <p class="modal-sub">Choose your AI backends. Keys are optional — built-ins are used by default.</p>
+        <p class="modal-sub">Configure providers, models, and your own API keys.</p>
 
         <div class="section-header">🧠 Chat Provider</div>
 
         <div class="field">
             <label>Chat Provider</label>
             <select id="set-chat-provider" onchange="onChatProviderChange()">
-                <option value="gemini">Gemini (default)</option>
+                <option value="gemini">Gemini</option>
                 <option value="groq">Groq</option>
                 <option value="pollinations">Pollinations (free, no key)</option>
             </select>
         </div>
 
         <div class="field">
-            <label>Chat Model</label>
+            <label>Chat Model (preset)</label>
             <select id="set-chat-model"></select>
+        </div>
+
+        <div class="field">
+            <label>Custom Chat Model (optional override)</label>
+            <input type="text" id="set-chat-model-custom" placeholder="e.g. llama-3.3-70b-versatile — leave blank to use preset">
+            <small>Overrides the preset above. Must be valid for the selected provider.</small>
         </div>
 
         <div class="section-header">🎨 Image Provider</div>
@@ -1058,8 +1072,26 @@ html, body {
         </div>
 
         <div class="field">
-            <label>Image Model</label>
+            <label>Image Model (preset)</label>
             <select id="set-image-model"></select>
+        </div>
+
+        <div class="field">
+            <label>Custom Image Model (optional override)</label>
+            <input type="text" id="set-image-model-custom" placeholder="e.g. stabilityai/sdxl-turbo — leave blank to use preset">
+        </div>
+
+        <div class="section-header">🎙️ TTS Voice (Fish Audio)</div>
+
+        <div class="field">
+            <label>TTS Voice</label>
+            <select id="set-tts-voice"></select>
+        </div>
+
+        <div class="field">
+            <label>Custom Voice ID (optional override)</label>
+            <input type="text" id="set-tts-voice-custom" placeholder="Paste a Fish Audio voice ID...">
+            <small>Overrides the preset above. Get IDs from <a href="https://fish.audio" target="_blank">fish.audio</a>.</small>
         </div>
 
         <div class="section-header">🔑 Your API Keys (Optional Override)</div>
@@ -1077,6 +1109,12 @@ html, body {
         </div>
 
         <div class="field">
+            <label>Your Pollinations API Key</label>
+            <input type="password" id="user-pollinations" placeholder="sk_... — leave blank to use built-in">
+            <small>Optional. Get a key from <a href="https://pollinations.ai" target="_blank">pollinations.ai</a></small>
+        </div>
+
+        <div class="field">
             <label>Your HuggingFace Token</label>
             <input type="password" id="user-hf" placeholder="hf_... — leave blank to use built-in">
             <small>Free token from <a href="https://huggingface.co/settings/tokens" target="_blank">huggingface.co</a></small>
@@ -1086,6 +1124,12 @@ html, body {
             <label>Your SiliconFlow API Key</label>
             <input type="password" id="user-sf" placeholder="sk-... — leave blank to use built-in">
             <small>Required for video generation. From <a href="https://siliconflow.com" target="_blank">siliconflow.com</a></small>
+        </div>
+
+        <div class="field">
+            <label>Your Fish Audio API Key</label>
+            <input type="password" id="user-fish" placeholder="sk-... — leave blank to use built-in">
+            <small>Required for TTS. From <a href="https://fish.audio" target="_blank">fish.audio</a></small>
         </div>
 
         <div class="section-header">💬 System Prompt</div>
@@ -1144,6 +1188,18 @@ const STORAGE_ACTIVE = 'macai_active_v1';
 
 const HF_INFERENCE_URL = 'https://router.huggingface.co/hf-inference/models';
 const HF_SAFETY_MODEL = 'eliasalbouzidi/distilbert-nsfw-text-classifier';
+const FISH_TTS_URL = 'https://api.fish.audio/v1/tts';
+
+/* ===== Fish Audio Voices ===== */
+const FISH_VOICES = {
+    verity:       { id: "711cf3ed00ab441a8f54a45058047b7a", emoji: "🎙️", desc: "Verity (default)" },
+    jarvis:       { id: "612b878b113047d9a770c069c8b4fdfe", emoji: "🤖", desc: "Jarvis" },
+    idksterling:  { id: "68c6487d1bf04ee4aeb6400b068b8c5c", emoji: "🎭", desc: "IdkSterling" },
+    fem:          { id: "5233336f5f44460ea0902b0802375451", emoji: "👩", desc: "Female" },
+    boiledone:    { id: "8fd92984ad66427aae1b3a037bd75c54", emoji: "☠️", desc: "Boiled One" },
+    mrbeast:      { id: "20ba25deaa4f436b8eec1cdc2cb0e4f3", emoji: "💸", desc: "MrBeast" },
+    analoghorror: { id: "502eaf4758c348a6bf0b1686647f8c77", emoji: "📼", desc: "Analog Horror" }
+};
 
 /* ===== Model lists ===== */
 const CHAT_MODELS = {
@@ -1158,11 +1214,16 @@ const CHAT_MODELS = {
         { id: 'openai/gpt-oss-20b', name: 'GPT-OSS 20B' },
         { id: 'groq/compound', name: 'Groq Compound' },
         { id: 'groq/compound-mini', name: 'Groq Compound Mini' },
+        { id: 'llama-3.3-70b-versatile', name: 'Llama 3.3 70B' },
+        { id: 'llama-3.1-8b-instant', name: 'Llama 3.1 8B' },
         { id: 'qwen/qwen3.6-27b', name: 'Qwen 3.6 27B' },
         { id: 'qwen/qwen3.8-27b', name: 'Qwen 3.8 27B' }
     ],
     pollinations: [
-        { id: 'openai', name: 'OpenAI (via Pollinations)' }
+        { id: 'openai', name: 'OpenAI (via Pollinations)' },
+        { id: 'openai-fast', name: 'OpenAI Fast' },
+        { id: 'mistral', name: 'Mistral' },
+        { id: 'llama', name: 'Llama' }
     ]
 };
 
@@ -1200,14 +1261,20 @@ let state = {
     settings: {
         chatProvider: 'gemini',
         chatModel: 'gemini-2.0-flash-exp',
+        chatModelCustom: '',
         imageProvider: 'pollinations',
         imageModel: 'flux',
+        imageModelCustom: '',
+        ttsVoice: 'verity',
+        ttsVoiceCustom: '',
         systemPrompt: PRESETS.chill,
         autoName: true,
         userGroq: '',
         userGemini: '',
+        userPollinations: '',
         userHF: '',
-        userSF: ''
+        userSF: '',
+        userFish: ''
     },
     searchEnabled: false,
     mediaMode: 'chat',
@@ -1221,20 +1288,42 @@ let state = {
 function getKey(name) {
     const s = state.settings;
     const map = {
-        groq:         (s.userGroq   || KEYS.groq         || '').trim(),
-        groq2:        (s.userGroq   || KEYS.groq2        || '').trim(),
-        gemini:       (s.userGemini || KEYS.gemini       || '').trim(),
-        hfToken:      (s.userHF     || KEYS.hfToken      || '').trim(),
-        siliconflow:  (s.userSF     || KEYS.siliconflow  || '').trim(),
-        siliconflow2: (s.userSF     || KEYS.siliconflow2 || '').trim(),
-        siliconflow3: (s.userSF     || KEYS.siliconflow3 || '').trim(),
-        imgbb:        (KEYS.imgbb        || '').trim(),
-        pollinations: (KEYS.pollinations || '').trim(),
-        openrouter:   (KEYS.openrouter   || '').trim(),
-        geminiImage:  (KEYS.geminiImage || KEYS.gemini || '').trim(),
-        fishAudio:    (KEYS.fishAudio    || '').trim()
+        groq:         (s.userGroq         || KEYS.groq         || '').trim(),
+        groq2:        (s.userGroq         || KEYS.groq2        || '').trim(),
+        gemini:       (s.userGemini       || KEYS.gemini       || '').trim(),
+        hfToken:      (s.userHF           || KEYS.hfToken      || '').trim(),
+        siliconflow:  (s.userSF           || KEYS.siliconflow  || '').trim(),
+        siliconflow2: (s.userSF           || KEYS.siliconflow2 || '').trim(),
+        siliconflow3: (s.userSF           || KEYS.siliconflow3 || '').trim(),
+        imgbb:        (KEYS.imgbb         || '').trim(),
+        pollinations: (s.userPollinations || KEYS.pollinations || '').trim(),
+        openrouter:   (KEYS.openrouter    || '').trim(),
+        geminiImage:  (KEYS.geminiImage   || KEYS.gemini || '').trim(),
+        fish:         (s.userFish         || KEYS.fishAudio    || '').trim()
     };
     return map[name] || '';
+}
+
+/* ============================================================ */
+/* EFFECTIVE MODEL/VOICE RESOLVERS                               */
+/* ============================================================ */
+function getEffectiveChatModel() {
+    return (state.settings.chatModelCustom || '').trim() || state.settings.chatModel;
+}
+function getEffectiveImageModel() {
+    return (state.settings.imageModelCustom || '').trim() || state.settings.imageModel;
+}
+function getEffectiveTTSVoiceId() {
+    const custom = (state.settings.ttsVoiceCustom || '').trim();
+    if (custom) return custom;
+    const v = FISH_VOICES[state.settings.ttsVoice];
+    return v ? v.id : FISH_VOICES.verity.id;
+}
+function getEffectiveTTSVoiceName() {
+    const custom = (state.settings.ttsVoiceCustom || '').trim();
+    if (custom) return 'Custom (' + custom.slice(0, 10) + '…)';
+    const v = FISH_VOICES[state.settings.ttsVoice];
+    return v ? `${v.emoji} ${v.desc}` : 'Verity';
 }
 
 /* ============================================================ */
@@ -1392,12 +1481,12 @@ function renderMessages() {
         box.innerHTML = `<div class="empty-state">
             <div class="empty-state-icon">🔥</div>
             <h2>Mac AI</h2>
-            <p>Chat, or generate images, videos, and music — all in one place.</p>
+            <p>Chat, or generate images, videos, and speech — all in one place.</p>
             <div class="tip-grid">
                 <div class="tip"><strong>💬 Chat</strong>Ask anything — coding, ideas, questions.</div>
                 <div class="tip"><strong>🎨 Image</strong>Describe it, get it. Try: <em>a dragon on a mountain</em></div>
                 <div class="tip"><strong>🎬 Video</strong>Generate a short clip. Try: <em>ocean waves at sunset</em></div>
-                <div class="tip"><strong>🎵 Music</strong>Make a song. Try: <em>lofi hip-hop beats</em></div>
+                <div class="tip"><strong>🎙️ TTS</strong>Text-to-speech with custom Fish Audio voices.</div>
             </div>
         </div>`;
         return;
@@ -1429,7 +1518,7 @@ function renderMessage(m, index) {
             <button class="msg-action-btn" onclick="regenMsg(${index})">🔄 Regenerate</button>
             ${m.imageUrl ? `<button class="msg-action-btn" onclick="downloadUrl('${m.imageUrl}', 'image.png')">⬇ Download</button>` : ''}
             ${m.videoUrl ? `<button class="msg-action-btn" onclick="downloadUrl('${m.videoUrl}', 'video.mp4')">⬇ Download</button>` : ''}
-            ${m.audioUrl ? `<button class="msg-action-btn" onclick="downloadUrl('${m.audioUrl}', 'music.mp3')">⬇ Download</button>` : ''}
+            ${m.audioUrl ? `<button class="msg-action-btn" onclick="downloadUrl('${m.audioUrl}', 'speech.mp3')">⬇ Download</button>` : ''}
         </div>`;
 
     return `<div class="msg ${isUser ? 'user' : 'assistant'}">
@@ -1452,13 +1541,13 @@ function updateInputHint() {
         chat: 'Chat mode — ask anything. Shift+Enter for newline.',
         image: '🎨 Image mode — describe the image you want.',
         video: '🎬 Video mode — describe the scene. May take 1–3 minutes.',
-        music: '🎵 Music mode — describe the sound or vibe.'
+        tts: '🎙️ TTS mode — your text will be spoken with the selected Fish Audio voice.'
     };
     const placeholders = {
         chat: 'Ask anything...',
         image: 'A dragon on a mountain at sunset...',
         video: 'Ocean waves crashing on rocks...',
-        music: 'Lofi hip-hop with rain sounds...'
+        tts: 'Hello, this is Mac AI speaking...'
     };
     document.getElementById('input-hint').textContent = hints[state.mediaMode] || hints.chat;
     document.getElementById('chat-input').placeholder = placeholders[state.mediaMode] || placeholders.chat;
@@ -1514,8 +1603,8 @@ async function sendMessage() {
         await handleImageGen(chat, text);
     } else if (state.mediaMode === 'video') {
         await handleVideoGen(chat, text);
-    } else if (state.mediaMode === 'music') {
-        await handleMusicGen(chat, text);
+    } else if (state.mediaMode === 'tts') {
+        await handleTTS(chat, text);
     } else {
         await handleChatResponse(chat);
     }
@@ -1583,7 +1672,7 @@ async function handleImageGen(chat, prompt) {
         }
 
         const provider = state.settings.imageProvider || 'pollinations';
-        const model = state.settings.imageModel;
+        const model = getEffectiveImageModel();
         chat.messages[msgIndex].content = `🎨 Generating image with **${provider}**...`;
         chat.messages[msgIndex].progress = 40;
         chat.messages[msgIndex].progressLabel = 'Rendering';
@@ -1654,7 +1743,6 @@ async function generateHFImage(prompt, modelId) {
             if (!res.ok) { lastErr = `HF ${m}: ${res.status}`; continue; }
             const blob = await res.blob();
             if (blob.size < 500) { lastErr = `HF ${m}: empty response`; continue; }
-            // Remember working model
             state.settings.imageModel = m;
             return blob;
         } catch (e) { lastErr = `${m}: ${e.message}`; continue; }
@@ -1681,7 +1769,6 @@ async function generateGeminiImage(prompt, modelId) {
     const data = await res.json();
     const b64 = data.predictions?.[0]?.bytesBase64Encoded || data.predictions?.[0]?.image?.imageBytes;
     if (!b64) throw new Error('No image data from Gemini');
-    // Convert base64 → blob
     const binary = atob(b64);
     const bytes = new Uint8Array(binary.length);
     for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
@@ -1816,53 +1903,71 @@ async function handleVideoGen(chat, prompt) {
 }
 
 /* ============================================================ */
-/* MUSIC GENERATION — Pollinations Audio                         */
+/* TTS — Fish Audio                                              */
 /* ============================================================ */
-async function handleMusicGen(chat, prompt) {
+async function handleTTS(chat, text) {
     state.isGenerating = true;
     setSending(true);
 
     const msgIndex = chat.messages.length;
     chat.messages.push({
         role: 'assistant',
-        content: `🎵 Generating music...\nPrompt: *${escapeHtml(prompt)}*`,
+        content: `🎙️ Synthesizing speech with **${getEffectiveTTSVoiceName()}**...`,
         progress: 30,
-        progressLabel: 'Composing audio',
+        progressLabel: 'Generating audio',
         ts: Date.now(),
         pending: true
     });
     renderMessages();
 
     try {
-        const url = 'https://gen.pollinations.ai/audio/' + encodeURIComponent(prompt);
-        const headers = { 'User-Agent': 'MacAI/1.0' };
-        const pollKey = getKey('pollinations');
-        if (pollKey) headers['Authorization'] = 'Bearer ' + pollKey;
-
-        const res = await fetch(url, { headers });
-        if (!res.ok) {
-            const txt = await res.text();
-            throw new Error(`API ${res.status}: ${txt.slice(0, 100)}`);
+        const fishKey = getKey('fish');
+        if (!fishKey) {
+            throw new Error('Fish Audio API key required. Add one in ⚙️ Settings.');
         }
+
+        const voiceId = getEffectiveTTSVoiceId();
+
+        const res = await fetch(FISH_TTS_URL, {
+            method: 'POST',
+            headers: {
+                'Authorization': 'Bearer ' + fishKey,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                text: text,
+                reference_id: voiceId,
+                format: 'mp3',
+                mp3_bitrate: 128,
+                normalize: true
+            })
+        });
+
+        if (!res.ok) {
+            const err = await res.text();
+            throw new Error(`Fish Audio ${res.status}: ${err.slice(0, 180)}`);
+        }
+
         const blob = await res.blob();
-        if (blob.size < 1000) throw new Error('Audio too small — generation failed');
+        if (blob.size < 500) throw new Error('Audio too small — check voice ID or API key');
         const audioUrl = URL.createObjectURL(blob);
 
         chat.messages[msgIndex] = {
             role: 'assistant',
-            content: `🎵 **Music ready!**\nPrompt: *${escapeHtml(prompt)}*`,
+            content: `🎙️ **Speech ready!**\nVoice: *${escapeHtml(getEffectiveTTSVoiceName())}*\nText: *${escapeHtml(text)}*`,
             audioUrl: audioUrl,
             ts: Date.now()
         };
     } catch (e) {
         chat.messages[msgIndex] = {
             role: 'assistant',
-            content: `❌ Music generation failed: ${escapeHtml(e.message || 'Unknown error')}`,
+            content: `❌ TTS generation failed: ${escapeHtml(e.message || 'Unknown error')}`,
             ts: Date.now()
         };
     }
 
     finishGen(chat);
+    if (state.settings.autoName && !chat.autoNamed) autoNameChat(chat);
 }
 
 /* ============================================================ */
@@ -1903,11 +2008,10 @@ async function handleChatResponse(chat) {
         const payload = [...systemMsgs, ...history];
 
         const provider = state.settings.chatProvider || 'gemini';
-        const model = state.settings.chatModel;
+        const model = getEffectiveChatModel();
         let reply = null;
         let lastErr = null;
 
-        // Try selected provider first, then fallbacks
         if (provider === 'gemini') {
             try { reply = await callGemini(payload, sysPrompt, model); }
             catch (e) { lastErr = e; console.warn('Gemini fail', e); }
@@ -1927,7 +2031,6 @@ async function handleChatResponse(chat) {
             catch (e) { lastErr = e; console.warn('Pollinations fail', e); }
         }
 
-        // Final fallback — Pollinations
         if (!reply) {
             try { reply = await callPollinations(payload); }
             catch (e) { lastErr = e; }
@@ -1956,7 +2059,7 @@ async function handleChatResponse(chat) {
 async function callGroq(messages, key, model) {
     const useModel = model && model.startsWith('openai/') || model && model.startsWith('groq/') || model && model.startsWith('qwen/')
         ? model
-        : 'openai/gpt-oss-120b';
+        : (model || 'openai/gpt-oss-120b');
     const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
         headers: {
@@ -1981,7 +2084,7 @@ async function callGroq(messages, key, model) {
 async function callGemini(messages, systemPrompt, model) {
     const useModel = model && model.startsWith('gemini-')
         ? model
-        : 'gemini-2.0-flash-exp';
+        : (model || 'gemini-2.0-flash-exp');
     const contents = messages
         .filter(m => m.role !== 'system')
         .map(m => ({
@@ -2048,7 +2151,6 @@ async function autoNameChat(chat) {
         const prompt = `Generate a short 3-4 word title for a chat that starts with this message. Only output the title, nothing else. No quotes.\n\nMessage: "${firstUser.content.slice(0, 300)}"`;
         const payload = [{ role: 'user', content: prompt }];
         let title = '';
-        // Try Gemini first, then Groq, then Pollinations
         try { title = await callGemini(payload); } catch {}
         if (!title) try { title = await callGroq(payload, getKey('groq')); } catch {}
         if (!title) try { title = await callPollinations(payload); } catch {}
@@ -2088,7 +2190,7 @@ async function regenMsg(index) {
     renderMessages();
 
     if (removed[0]?.videoUrl) await handleVideoGen(chat, lastUser.content);
-    else if (removed[0]?.audioUrl) await handleMusicGen(chat, lastUser.content);
+    else if (removed[0]?.audioUrl) await handleTTS(chat, lastUser.content);
     else if (removed[0]?.imageUrl) await handleImageGen(chat, lastUser.content);
     else await handleChatResponse(chat);
 }
@@ -2131,6 +2233,13 @@ function populateImageModels(provider, targetId, selected) {
     ).join('');
 }
 
+function populateVoices(targetId, selected) {
+    const sel = document.getElementById(targetId);
+    sel.innerHTML = Object.entries(FISH_VOICES).map(([key, v]) =>
+        `<option value="${key}"${key === selected ? ' selected' : ''}>${v.emoji} ${v.desc}</option>`
+    ).join('');
+}
+
 function onChatProviderChange() {
     const provider = document.getElementById('set-chat-provider').value;
     const defaults = { gemini: 'gemini-2.0-flash-exp', groq: 'openai/gpt-oss-120b', pollinations: 'openai' };
@@ -2146,14 +2255,21 @@ function onImageProviderChange() {
 function applySettingsToUI() {
     document.getElementById('user-groq').value = state.settings.userGroq || '';
     document.getElementById('user-gemini').value = state.settings.userGemini || '';
+    document.getElementById('user-pollinations').value = state.settings.userPollinations || '';
     document.getElementById('user-hf').value = state.settings.userHF || '';
     document.getElementById('user-sf').value = state.settings.userSF || '';
+    document.getElementById('user-fish').value = state.settings.userFish || '';
 
     document.getElementById('set-chat-provider').value = state.settings.chatProvider || 'gemini';
     populateModels(state.settings.chatProvider || 'gemini', 'set-chat-model', state.settings.chatModel);
+    document.getElementById('set-chat-model-custom').value = state.settings.chatModelCustom || '';
 
     document.getElementById('set-image-provider').value = state.settings.imageProvider || 'pollinations';
     populateImageModels(state.settings.imageProvider || 'pollinations', 'set-image-model', state.settings.imageModel);
+    document.getElementById('set-image-model-custom').value = state.settings.imageModelCustom || '';
+
+    populateVoices('set-tts-voice', state.settings.ttsVoice || 'verity');
+    document.getElementById('set-tts-voice-custom').value = state.settings.ttsVoiceCustom || '';
 
     document.getElementById('set-prompt').value = state.settings.systemPrompt || '';
     document.getElementById('set-autoname').checked = state.settings.autoName !== false;
@@ -2162,13 +2278,21 @@ function applySettingsToUI() {
 function saveSettings() {
     state.settings.userGroq = document.getElementById('user-groq').value.trim();
     state.settings.userGemini = document.getElementById('user-gemini').value.trim();
+    state.settings.userPollinations = document.getElementById('user-pollinations').value.trim();
     state.settings.userHF = document.getElementById('user-hf').value.trim();
     state.settings.userSF = document.getElementById('user-sf').value.trim();
+    state.settings.userFish = document.getElementById('user-fish').value.trim();
 
     state.settings.chatProvider = document.getElementById('set-chat-provider').value;
     state.settings.chatModel = document.getElementById('set-chat-model').value;
+    state.settings.chatModelCustom = document.getElementById('set-chat-model-custom').value.trim();
+
     state.settings.imageProvider = document.getElementById('set-image-provider').value;
     state.settings.imageModel = document.getElementById('set-image-model').value;
+    state.settings.imageModelCustom = document.getElementById('set-image-model-custom').value.trim();
+
+    state.settings.ttsVoice = document.getElementById('set-tts-voice').value;
+    state.settings.ttsVoiceCustom = document.getElementById('set-tts-voice-custom').value.trim();
 
     state.settings.systemPrompt = document.getElementById('set-prompt').value;
     state.settings.autoName = document.getElementById('set-autoname').checked;
