@@ -1,0 +1,2214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mac AI — Macro</title>
+<style>
+:root {
+    --bg: #1a0805;
+    --bg-2: #2d0f00;
+    --panel: rgba(45, 15, 0, 0.7);
+    --panel-2: rgba(26, 8, 5, 0.85);
+    --border: rgba(255, 107, 26, 0.2);
+    --border-hi: rgba(255, 107, 26, 0.5);
+    --text: #f5e6d3;
+    --text-muted: #c9a890;
+    --accent: #ff6b1a;
+    --accent-2: #dc2626;
+    --accent-3: #ff8c1a;
+    --ok: #22c55e;
+    --err: #ef4444;
+    --shadow: 0 10px 40px rgba(255, 107, 26, 0.15);
+    --shadow-hi: 0 20px 50px rgba(255, 107, 26, 0.35);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body { scrollbar-width: none !important; }
+html::-webkit-scrollbar, body::-webkit-scrollbar, *::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+}
+
+html, body {
+    height: 100vh;
+    background: linear-gradient(135deg, var(--bg) 0%, var(--bg-2) 100%);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Courier New', monospace;
+    overflow: hidden;
+}
+
+.app {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    height: 100vh;
+}
+
+/* ===== SIDEBAR ===== */
+.sidebar {
+    background: var(--panel-2);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+}
+
+.sb-brand {
+    padding: 20px 20px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid var(--border);
+}
+
+.sb-brand-icon {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    display: grid;
+    place-items: center;
+    font-size: 20px;
+    box-shadow: 0 0 20px rgba(255, 107, 26, 0.5);
+}
+
+.sb-brand h1 {
+    font-size: 17px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    background: linear-gradient(90deg, var(--accent-3), var(--accent-2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.sb-brand small {
+    display: block;
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-top: 1px;
+}
+
+.sb-back-btn {
+    margin: 12px 16px 0;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-muted);
+    font-weight: 700;
+    font-size: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.15s;
+    font-family: inherit;
+    text-decoration: none;
+}
+
+.sb-back-btn:hover {
+    background: rgba(255,107,26,0.15);
+    color: var(--text);
+    border-color: var(--border-hi);
+}
+
+.sb-new-btn {
+    margin: 12px 16px;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid var(--border-hi);
+    background: linear-gradient(135deg, rgba(255,107,26,0.15), rgba(220,38,38,0.15));
+    color: var(--text);
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s;
+    font-family: inherit;
+}
+
+.sb-new-btn:hover {
+    background: linear-gradient(135deg, rgba(255,107,26,0.3), rgba(220,38,38,0.3));
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(255,107,26,0.3);
+}
+
+.sb-section {
+    flex: 1;
+    overflow-y: auto;
+    padding: 6px 12px 12px;
+}
+
+.sb-label {
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    padding: 10px 8px 6px;
+}
+
+.chat-item {
+    padding: 10px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 4px;
+    transition: all 0.15s;
+    border: 1px solid transparent;
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.chat-item:hover {
+    background: rgba(255,107,26,0.08);
+    color: var(--text);
+}
+
+.chat-item.active {
+    background: linear-gradient(135deg, rgba(255,107,26,0.2), rgba(220,38,38,0.15));
+    color: var(--text);
+    border-color: var(--border-hi);
+    font-weight: 700;
+}
+
+.chat-item-name {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.chat-item-del {
+    opacity: 0;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 14px;
+    line-height: 1;
+    transition: all 0.15s;
+    font-family: inherit;
+}
+
+.chat-item:hover .chat-item-del { opacity: 1; }
+.chat-item-del:hover { background: rgba(239,68,68,0.2); color: var(--err); }
+
+.sb-footer {
+    border-top: 1px solid var(--border);
+    padding: 12px 16px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.sb-footer button {
+    flex: 1;
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: inherit;
+    letter-spacing: 0.5px;
+}
+
+.sb-footer button:hover {
+    background: rgba(255,107,26,0.15);
+    color: var(--text);
+    border-color: var(--border-hi);
+}
+
+.sb-footer button.danger:hover {
+    background: rgba(239,68,68,0.15);
+    color: var(--err);
+    border-color: rgba(239,68,68,0.5);
+}
+
+/* ===== MAIN ===== */
+.main {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: var(--bg);
+    position: relative;
+}
+
+.main::before {
+    content: '';
+    position: absolute;
+    top: -300px; right: -300px;
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,107,26,0.12) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.topbar {
+    padding: 14px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(26, 8, 5, 0.6);
+    backdrop-filter: blur(10px);
+    z-index: 2;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+}
+
+.back-btn {
+    background: var(--panel);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 7px 12px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: inherit;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+}
+
+.back-btn:hover {
+    background: rgba(255,107,26,0.15);
+    color: var(--text);
+    border-color: var(--border-hi);
+}
+
+.chat-title {
+    flex: 1;
+    min-width: 120px;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.mode-tabs {
+    display: flex;
+    gap: 4px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 10px;
+    padding: 4px;
+    border: 1px solid var(--border);
+}
+
+.mode-tab {
+    padding: 6px 14px;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: inherit;
+    letter-spacing: 0.3px;
+}
+
+.mode-tab:hover { color: var(--text); }
+
+.mode-tab.active {
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    color: white;
+    box-shadow: 0 4px 15px rgba(255,107,26,0.4);
+}
+
+.topbar-btn {
+    background: var(--panel);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 7px 12px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: inherit;
+    white-space: nowrap;
+}
+
+.topbar-btn:hover {
+    background: rgba(255,107,26,0.15);
+    color: var(--text);
+    border-color: var(--border-hi);
+}
+
+.topbar-btn.active {
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    color: white;
+    border-color: transparent;
+    box-shadow: 0 4px 15px rgba(255,107,26,0.4);
+}
+
+/* ===== MESSAGES ===== */
+.messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 30px 8% 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    z-index: 1;
+}
+
+.empty-state {
+    margin: auto;
+    text-align: center;
+    max-width: 560px;
+    padding: 40px;
+}
+
+.empty-state-icon {
+    font-size: 64px;
+    margin-bottom: 20px;
+    filter: drop-shadow(0 0 30px rgba(255,107,26,0.6));
+}
+
+.empty-state h2 {
+    font-size: 28px;
+    font-weight: 800;
+    background: linear-gradient(90deg, var(--accent-3), var(--accent-2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 10px;
+    letter-spacing: -0.5px;
+}
+
+.empty-state p {
+    color: var(--text-muted);
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.empty-state .tip-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-top: 24px;
+    text-align: left;
+}
+
+.empty-state .tip {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.empty-state .tip strong { color: var(--accent-3); display: block; margin-bottom: 3px; font-size: 12px; }
+
+.msg {
+    display: flex;
+    gap: 16px;
+    animation: msgIn 0.3s ease-out;
+}
+
+@keyframes msgIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.msg-avatar {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    font-size: 16px;
+    font-weight: 800;
+}
+
+.msg.user .msg-avatar {
+    background: linear-gradient(135deg, #3d1500, #1a0805);
+    border: 1px solid var(--border);
+    color: var(--accent-3);
+}
+
+.msg.assistant .msg-avatar {
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    color: white;
+    box-shadow: 0 0 20px rgba(255,107,26,0.4);
+}
+
+.msg-body {
+    flex: 1;
+    min-width: 0;
+    padding-top: 6px;
+}
+
+.msg-role {
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+
+.msg.assistant .msg-role { color: var(--accent-3); }
+
+.msg-content {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--text);
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.msg-content code {
+    background: rgba(255,107,26,0.1);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    color: var(--accent-3);
+    border: 1px solid var(--border);
+}
+
+.msg-content pre {
+    background: rgba(0,0,0,0.5);
+    padding: 16px;
+    border-radius: 10px;
+    overflow-x: auto;
+    margin: 12px 0;
+    border: 1px solid var(--border);
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.msg-content pre code {
+    background: none;
+    border: none;
+    padding: 0;
+    color: #ffc9a0;
+}
+
+.msg-content strong { color: var(--accent-3); font-weight: 800; }
+.msg-content em { color: var(--text-muted); }
+
+.msg-image {
+    max-width: 512px;
+    border-radius: 12px;
+    border: 2px solid var(--border-hi);
+    margin-top: 10px;
+    box-shadow: var(--shadow-hi);
+    display: block;
+}
+
+.msg-video {
+    max-width: 640px;
+    border-radius: 12px;
+    border: 2px solid var(--border-hi);
+    margin-top: 10px;
+    box-shadow: var(--shadow-hi);
+    display: block;
+    background: #000;
+}
+
+.msg-audio {
+    width: 100%;
+    max-width: 500px;
+    margin-top: 10px;
+    border-radius: 10px;
+}
+
+.msg-actions {
+    display: flex;
+    gap: 6px;
+    margin-top: 10px;
+    opacity: 0;
+    transition: opacity 0.15s;
+    flex-wrap: wrap;
+}
+
+.msg:hover .msg-actions { opacity: 1; }
+
+.msg-action-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: inherit;
+}
+
+.msg-action-btn:hover {
+    background: rgba(255,107,26,0.15);
+    color: var(--text);
+    border-color: var(--border-hi);
+}
+
+.progress-wrap {
+    margin-top: 12px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 8px;
+    padding: 12px;
+    border: 1px solid var(--border);
+    max-width: 400px;
+}
+
+.progress-label {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    font-weight: 700;
+}
+
+.progress-bar {
+    height: 6px;
+    background: rgba(255,107,26,0.15);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    border-radius: 3px;
+    width: 0%;
+    transition: width 0.5s ease;
+    box-shadow: 0 0 10px var(--accent);
+}
+
+/* ===== INPUT ===== */
+.input-area {
+    padding: 20px 8% 24px;
+    background: rgba(26, 8, 5, 0.6);
+    border-top: 1px solid var(--border);
+    backdrop-filter: blur(10px);
+    z-index: 2;
+    flex-shrink: 0;
+}
+
+.input-wrap {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 12px 12px 12px 20px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.input-wrap:focus-within {
+    border-color: var(--border-hi);
+    box-shadow: 0 0 0 4px rgba(255,107,26,0.1), var(--shadow);
+}
+
+#chat-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--text);
+    font-size: 15px;
+    font-family: inherit;
+    resize: none;
+    outline: none;
+    max-height: 200px;
+    min-height: 24px;
+    line-height: 1.5;
+    padding: 4px 0;
+}
+
+#chat-input::placeholder { color: var(--text-muted); }
+
+.send-btn {
+    width: 40px; height: 40px;
+    border-radius: 12px;
+    border: none;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    color: white;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    transition: all 0.2s;
+    flex-shrink: 0;
+    box-shadow: 0 4px 15px rgba(255,107,26,0.4);
+}
+
+.send-btn:hover:not(:disabled) {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(255,107,26,0.6);
+}
+
+.send-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.send-btn svg { width: 18px; height: 18px; fill: currentColor; }
+
+.input-hint {
+    text-align: center;
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 8px;
+    letter-spacing: 0.3px;
+}
+
+/* ===== MODAL ===== */
+.modal-bg {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(8px);
+    z-index: 100;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.modal-bg.active { display: flex; }
+
+.modal {
+    background: var(--bg-2);
+    border: 1px solid var(--border-hi);
+    border-radius: 20px;
+    width: 100%;
+    max-width: 640px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.8), var(--shadow-hi);
+    padding: 28px;
+    position: relative;
+    scrollbar-width: none !important;
+}
+.modal::-webkit-scrollbar { display: none !important; }
+
+.modal h2 {
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 6px;
+    background: linear-gradient(90deg, var(--accent-3), var(--accent-2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
+}
+
+.modal p.modal-sub {
+    color: var(--text-muted);
+    font-size: 13px;
+    margin-bottom: 22px;
+}
+
+.modal-close {
+    position: absolute;
+    top: 20px; right: 20px;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: rgba(255,107,26,0.1);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    font-size: 18px;
+    line-height: 1;
+    transition: all 0.15s;
+    font-family: inherit;
+}
+
+.modal-close:hover {
+    background: rgba(255,107,26,0.25);
+    color: var(--text);
+    transform: rotate(90deg);
+}
+
+.field {
+    margin-bottom: 18px;
+}
+
+.field label {
+    display: block;
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--accent-3);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+}
+
+.field input[type="text"],
+.field input[type="password"],
+.field textarea,
+.field select {
+    width: 100%;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 14px;
+    outline: none;
+    transition: all 0.15s;
+}
+
+.field input:focus,
+.field textarea:focus,
+.field select:focus {
+    border-color: var(--border-hi);
+    box-shadow: 0 0 0 3px rgba(255,107,26,0.15);
+}
+
+.field textarea {
+    resize: vertical;
+    min-height: 90px;
+    line-height: 1.5;
+}
+
+.field small {
+    display: block;
+    margin-top: 6px;
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 500;
+    letter-spacing: 0.2px;
+    line-height: 1.4;
+}
+
+.field small a { color: var(--accent-3); text-decoration: none; }
+.field small a:hover { text-decoration: underline; }
+
+.section-header {
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    padding: 16px 0 8px;
+    border-top: 1px solid var(--border);
+    margin-top: 12px;
+}
+
+.section-header:first-of-type {
+    border-top: none;
+    padding-top: 0;
+    margin-top: 0;
+}
+
+.preset-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.preset-btn {
+    padding: 6px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: inherit;
+}
+
+.preset-btn:hover {
+    background: rgba(255,107,26,0.15);
+    color: var(--text);
+    border-color: var(--border-hi);
+}
+
+.modal-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 22px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+}
+
+.btn-primary {
+    flex: 1;
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    color: white;
+    font-family: inherit;
+    font-weight: 800;
+    font-size: 13px;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    transition: all 0.2s;
+    box-shadow: 0 4px 15px rgba(255,107,26,0.4);
+}
+
+.btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(255,107,26,0.6);
+}
+
+.btn-secondary {
+    flex: 1;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-muted);
+    font-family: inherit;
+    font-weight: 800;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.5px;
+}
+
+.btn-secondary:hover {
+    background: rgba(255,107,26,0.1);
+    color: var(--text);
+    border-color: var(--border-hi);
+}
+
+/* ===== TOAST ===== */
+.toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--panel-2);
+    border: 1px solid var(--border-hi);
+    color: var(--text);
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    z-index: 999;
+    box-shadow: var(--shadow-hi);
+    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    pointer-events: none;
+    backdrop-filter: blur(10px);
+}
+
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 900px) {
+    .app { grid-template-columns: 1fr; }
+    .sidebar {
+        position: fixed;
+        top: 0; left: 0; bottom: 0;
+        width: 280px;
+        z-index: 50;
+        transform: translateX(-100%);
+        transition: transform 0.3s;
+        box-shadow: 30px 0 60px rgba(0,0,0,0.5);
+    }
+    .sidebar.open { transform: translateX(0); }
+    .menu-toggle { display: grid !important; }
+    .messages { padding: 20px 16px; }
+    .input-area { padding: 12px 16px 16px; }
+    .topbar { padding: 12px 16px; }
+    .mode-tabs { order: 3; width: 100%; justify-content: center; }
+    .empty-state .tip-grid { grid-template-columns: 1fr; }
+}
+
+.menu-toggle {
+    display: none;
+    place-items: center;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text-muted);
+    width: 36px; height: 36px;
+    cursor: pointer;
+    font-size: 18px;
+    font-family: inherit;
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+    <aside class="sidebar" id="sidebar">
+        <div class="sb-brand">
+            <div class="sb-brand-icon">🔥</div>
+            <div>
+                <h1>MAC AI</h1>
+                <small>by Macro</small>
+            </div>
+        </div>
+
+        <a href="index.html" class="sb-back-btn">← Back to Macro</a>
+
+        <button class="sb-new-btn" onclick="newChat()">
+            <span>+</span> New Chat
+        </button>
+
+        <div class="sb-section">
+            <div class="sb-label">Recent Chats</div>
+            <div id="chat-list"></div>
+        </div>
+
+        <div class="sb-footer">
+            <button onclick="openSettings()">⚙️ Settings</button>
+            <button onclick="exportChats()">⬇ Export</button>
+            <button class="danger" onclick="clearAllChats()">🗑 Wipe</button>
+        </div>
+    </aside>
+
+    <main class="main">
+        <div class="topbar">
+            <button class="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+            <a href="index.html" class="back-btn">← Back</a>
+            <div class="chat-title" id="chat-title" ondblclick="renameChat()">New Chat</div>
+
+            <div class="mode-tabs">
+                <button class="mode-tab active" data-mode="chat" onclick="setMediaMode('chat')">💬 Chat</button>
+                <button class="mode-tab" data-mode="image" onclick="setMediaMode('image')">🎨 Image</button>
+                <button class="mode-tab" data-mode="video" onclick="setMediaMode('video')">🎬 Video</button>
+                <button class="mode-tab" data-mode="music" onclick="setMediaMode('music')">🎵 Music</button>
+            </div>
+
+            <button class="topbar-btn" id="search-toggle" onclick="toggleSearch()" title="Web search">🌐</button>
+            <button class="topbar-btn" onclick="openSettings()">⚙️</button>
+        </div>
+
+        <div class="messages" id="messages"></div>
+
+        <div class="input-area">
+            <div class="input-wrap">
+                <textarea id="chat-input" placeholder="Ask anything..." rows="1"></textarea>
+                <button class="send-btn" id="send-btn" onclick="sendMessage()" title="Send">
+                    <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+                </button>
+            </div>
+            <div class="input-hint" id="input-hint">Chat mode — ask anything. Shift+Enter for newline.</div>
+        </div>
+    </main>
+</div>
+
+<!-- ===== SETTINGS MODAL ===== -->
+<div class="modal-bg" id="settings-modal">
+    <div class="modal">
+        <button class="modal-close" onclick="closeSettings()">✕</button>
+        <h2>⚙️ Settings</h2>
+        <p class="modal-sub">Choose your AI backends. Keys are optional — built-ins are used by default.</p>
+
+        <div class="section-header">🧠 Chat Provider</div>
+
+        <div class="field">
+            <label>Chat Provider</label>
+            <select id="set-chat-provider" onchange="onChatProviderChange()">
+                <option value="gemini">Gemini (default)</option>
+                <option value="groq">Groq</option>
+                <option value="pollinations">Pollinations (free, no key)</option>
+            </select>
+        </div>
+
+        <div class="field">
+            <label>Chat Model</label>
+            <select id="set-chat-model"></select>
+        </div>
+
+        <div class="section-header">🎨 Image Provider</div>
+
+        <div class="field">
+            <label>Image Provider</label>
+            <select id="set-image-provider" onchange="onImageProviderChange()">
+                <option value="pollinations">Pollinations (free, no key)</option>
+                <option value="hf">HuggingFace</option>
+                <option value="gemini">Gemini (Imagen)</option>
+            </select>
+        </div>
+
+        <div class="field">
+            <label>Image Model</label>
+            <select id="set-image-model"></select>
+        </div>
+
+        <div class="section-header">🔑 Your API Keys (Optional Override)</div>
+
+        <div class="field">
+            <label>Your Groq API Key</label>
+            <input type="password" id="user-groq" placeholder="gsk_... — leave blank to use built-in">
+            <small>Free key from <a href="https://console.groq.com" target="_blank">console.groq.com</a></small>
+        </div>
+
+        <div class="field">
+            <label>Your Gemini API Key</label>
+            <input type="password" id="user-gemini" placeholder="AIza... — leave blank to use built-in">
+            <small>Free key from <a href="https://aistudio.google.com/apikey" target="_blank">aistudio.google.com</a></small>
+        </div>
+
+        <div class="field">
+            <label>Your HuggingFace Token</label>
+            <input type="password" id="user-hf" placeholder="hf_... — leave blank to use built-in">
+            <small>Free token from <a href="https://huggingface.co/settings/tokens" target="_blank">huggingface.co</a></small>
+        </div>
+
+        <div class="field">
+            <label>Your SiliconFlow API Key</label>
+            <input type="password" id="user-sf" placeholder="sk-... — leave blank to use built-in">
+            <small>Required for video generation. From <a href="https://siliconflow.com" target="_blank">siliconflow.com</a></small>
+        </div>
+
+        <div class="section-header">💬 System Prompt</div>
+
+        <div class="field">
+            <label>System Prompt</label>
+            <textarea id="set-prompt" placeholder="You are a helpful assistant..."></textarea>
+            <div class="preset-row">
+                <button class="preset-btn" onclick="applyPreset('chill')">😎 Chill</button>
+                <button class="preset-btn" onclick="applyPreset('unhinged')">🔥 Unhinged</button>
+                <button class="preset-btn" onclick="applyPreset('coder')">💻 Coder</button>
+                <button class="preset-btn" onclick="applyPreset('childish')">🧒 Childish</button>
+                <button class="preset-btn" onclick="applyPreset('assistant')">🤖 Assistant</button>
+            </div>
+        </div>
+
+        <div class="field">
+            <label>
+                <input type="checkbox" id="set-autoname" style="margin-right: 8px;">
+                Auto-name chats with AI
+            </label>
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn-secondary" onclick="closeSettings()">Cancel</button>
+            <button class="btn-primary" onclick="saveSettings()">Save Settings</button>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   🔑 HARDCODED API KEYS
+   ═══════════════════════════════════════════════════════════════ */
+const KEYS = {
+    groq:            'gsk_cWasshkjJCWGdyb3FYPBE4IsEqEhPPQUN3Rsr8HYHm',
+    groq2:           'gsk_VGQyRVWGdyb3FYuPS5OLQowF3JJ5DlL8oZIs2X',
+    gemini:          'A4kXXHwtYm4qdYHT_yx12tzTcMLVssG7vBKQ42O1sag',
+    geminiImage:     'AwtYm4qdYHT_yx12tzTcMLVssG7vBKQ42O1sag',
+    hfToken:         'hUOOFYGvFItHkgagSzSzfvSsjJTS',
+    imgbb:           'd048c6c4a79d6e55f1545c4626a42a12',
+    siliconflow:     'skywjgdkpannajtkmnxclflkrvwzpgziwokmzj',
+    siliconflow2:    'skwecounzlvwchxrccxhnddpvntd',
+    siliconflow3:    'dhqzptzokmwmaxtopvocsxgtkjpvne',
+    pollinations:    'sk_hyKiCPNwBZ5vzAqCDAnULcJlSI9Xowmi',
+    openrouter:      '09f4795f2c73af8595a7c810e582a2f19340a4076b3c2786f7d4',
+    fishAudio:       'sk-fish-kDCmvGWWoMS_P'
+};
+/* ═══════════════════════════════════════════════════════════════ */
+
+const STORAGE_CHATS = 'macai_chats_v1';
+const STORAGE_SETTINGS = 'macai_settings_v1';
+const STORAGE_ACTIVE = 'macai_active_v1';
+
+const HF_INFERENCE_URL = 'https://router.huggingface.co/hf-inference/models';
+const HF_SAFETY_MODEL = 'eliasalbouzidi/distilbert-nsfw-text-classifier';
+
+/* ===== Model lists ===== */
+const CHAT_MODELS = {
+    gemini: [
+        { id: 'gemini-2.0-flash-exp', name: 'Gemini 2.0 Flash (default)' },
+        { id: 'gemini-1.5-flash', name: 'Gemini 1.5 Flash' },
+        { id: 'gemini-1.5-flash-8b', name: 'Gemini 1.5 Flash 8B' },
+        { id: 'gemini-1.5-pro', name: 'Gemini 1.5 Pro' }
+    ],
+    groq: [
+        { id: 'openai/gpt-oss-120b', name: 'GPT-OSS 120B (default)' },
+        { id: 'openai/gpt-oss-20b', name: 'GPT-OSS 20B' },
+        { id: 'groq/compound', name: 'Groq Compound' },
+        { id: 'groq/compound-mini', name: 'Groq Compound Mini' },
+        { id: 'qwen/qwen3.6-27b', name: 'Qwen 3.6 27B' },
+        { id: 'qwen/qwen3.8-27b', name: 'Qwen 3.8 27B' }
+    ],
+    pollinations: [
+        { id: 'openai', name: 'OpenAI (via Pollinations)' }
+    ]
+};
+
+const IMAGE_MODELS = {
+    pollinations: [
+        { id: 'flux', name: 'Flux (default)' },
+        { id: 'turbo', name: 'Turbo (fast)' },
+        { id: 'flux-realism', name: 'Flux Realism' },
+        { id: 'flux-anime', name: 'Flux Anime' },
+        { id: 'flux-3d', name: 'Flux 3D' }
+    ],
+    hf: [
+        { id: 'Tongyi-MAI/Z-Image-Turbo', name: 'Z-Image-Turbo' },
+        { id: 'Qwen/Qwen-Image', name: 'Qwen Image' },
+        { id: 'ByteDance/Hyper-SD', name: 'Hyper SD' },
+        { id: 'stabilityai/stable-diffusion-xl-base-1.0', name: 'SDXL Base 1.0' },
+        { id: 'black-forest-labs/FLUX.1-schnell', name: 'FLUX.1 Schnell' }
+    ],
+    gemini: [
+        { id: 'imagen-3.0-generate-002', name: 'Imagen 3.0 (default)' }
+    ]
+};
+
+const PRESETS = {
+    chill: `You are Mac AI — hype, chill, Gen-Z energy. Talk like you're on Discord with the boys. Use emojis naturally (😭🔥💀📈). Be casual, funny, reactive. When the user says something weak, drop an AURA ROAST — short, punchy jokes. When they say something cool, hype them up. Keep replies short and full of energy.`,
+    unhinged: `You are Mac AI — unfiltered, chaotic, dramatic. Swear freely. Be intense and loud. IMPORTANT LIMITS: never target anyone based on race, ethnicity, religion, gender, gender identity, sexual orientation, disability, age, or nationality. Punch up, not down. No slurs. No hate speech. Roast ideas and behaviour, not identity.`,
+    coder: `You are Mac AI — expert programmer. Provide concise, accurate code solutions. Use markdown code blocks for code. Explain clearly. Prioritise efficiency and correctness.`,
+    childish: `You are Mac AI — act hyperactive and goofy with modern meme slang. Use 'gyatt', 'skibidi', 'rizz', 'sigma' moderately. Be immature and silly but stay coherent. Keep it clean enough for a public server.`,
+    assistant: `You are Mac AI — a helpful, friendly AI assistant. Be clear, accurate, and useful. Use markdown for structure. Cite sources when searching the web.`
+};
+
+let state = {
+    chats: {},
+    activeId: null,
+    settings: {
+        chatProvider: 'gemini',
+        chatModel: 'gemini-2.0-flash-exp',
+        imageProvider: 'pollinations',
+        imageModel: 'flux',
+        systemPrompt: PRESETS.chill,
+        autoName: true,
+        userGroq: '',
+        userGemini: '',
+        userHF: '',
+        userSF: ''
+    },
+    searchEnabled: false,
+    mediaMode: 'chat',
+    isGenerating: false,
+    sfKeyIndex: 0
+};
+
+/* ============================================================ */
+/* KEY RESOLVER                                                  */
+/* ============================================================ */
+function getKey(name) {
+    const s = state.settings;
+    const map = {
+        groq:         (s.userGroq   || KEYS.groq         || '').trim(),
+        groq2:        (s.userGroq   || KEYS.groq2        || '').trim(),
+        gemini:       (s.userGemini || KEYS.gemini       || '').trim(),
+        hfToken:      (s.userHF     || KEYS.hfToken      || '').trim(),
+        siliconflow:  (s.userSF     || KEYS.siliconflow  || '').trim(),
+        siliconflow2: (s.userSF     || KEYS.siliconflow2 || '').trim(),
+        siliconflow3: (s.userSF     || KEYS.siliconflow3 || '').trim(),
+        imgbb:        (KEYS.imgbb        || '').trim(),
+        pollinations: (KEYS.pollinations || '').trim(),
+        openrouter:   (KEYS.openrouter   || '').trim(),
+        geminiImage:  (KEYS.geminiImage || KEYS.gemini || '').trim(),
+        fishAudio:    (KEYS.fishAudio    || '').trim()
+    };
+    return map[name] || '';
+}
+
+/* ============================================================ */
+/* INIT                                                          */
+/* ============================================================ */
+function init() {
+    try {
+        const saved = localStorage.getItem(STORAGE_CHATS);
+        if (saved) state.chats = JSON.parse(saved);
+        const sets = localStorage.getItem(STORAGE_SETTINGS);
+        if (sets) state.settings = { ...state.settings, ...JSON.parse(sets) };
+        const act = localStorage.getItem(STORAGE_ACTIVE);
+        if (act && state.chats[act]) state.activeId = act;
+    } catch (e) { console.error('Load failed', e); }
+
+    if (!state.activeId) createChat();
+
+    renderChatList();
+    renderMessages();
+    updateTitle();
+    applySettingsToUI();
+    updateInputHint();
+
+    const input = document.getElementById('chat-input');
+    input.addEventListener('input', () => {
+        input.style.height = 'auto';
+        input.style.height = Math.min(input.scrollHeight, 200) + 'px';
+    });
+    input.addEventListener('keydown', e => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+        }
+    });
+}
+
+/* ============================================================ */
+/* CHAT MANAGEMENT                                               */
+/* ============================================================ */
+function saveChats() {
+    localStorage.setItem(STORAGE_CHATS, JSON.stringify(state.chats));
+    localStorage.setItem(STORAGE_SETTINGS, JSON.stringify(state.settings));
+    if (state.activeId) localStorage.setItem(STORAGE_ACTIVE, state.activeId);
+}
+
+function createChat() {
+    const id = 'chat_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
+    state.chats[id] = {
+        id,
+        name: 'New Chat',
+        messages: [],
+        systemPrompt: state.settings.systemPrompt,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+        autoNamed: false
+    };
+    state.activeId = id;
+    saveChats();
+    renderChatList();
+    renderMessages();
+    updateTitle();
+    return id;
+}
+
+function newChat() {
+    createChat();
+    document.getElementById('sidebar').classList.remove('open');
+}
+
+function switchChat(id) {
+    if (!state.chats[id]) return;
+    state.activeId = id;
+    saveChats();
+    renderChatList();
+    renderMessages();
+    updateTitle();
+    document.getElementById('sidebar').classList.remove('open');
+}
+
+function deleteChat(id, ev) {
+    ev.stopPropagation();
+    if (!confirm('Delete this chat?')) return;
+    delete state.chats[id];
+    if (state.activeId === id) {
+        const remaining = Object.keys(state.chats);
+        state.activeId = remaining.length ? remaining[0] : null;
+        if (!state.activeId) createChat();
+    }
+    saveChats();
+    renderChatList();
+    renderMessages();
+    updateTitle();
+}
+
+function clearAllChats() {
+    if (!confirm('Wipe ALL chats? This cannot be undone.')) return;
+    state.chats = {};
+    state.activeId = null;
+    localStorage.removeItem(STORAGE_CHATS);
+    createChat();
+}
+
+function renameChat() {
+    const chat = getActive();
+    if (!chat) return;
+    const name = prompt('Rename chat:', chat.name);
+    if (name && name.trim()) {
+        chat.name = name.trim();
+        saveChats();
+        renderChatList();
+        updateTitle();
+    }
+}
+
+function exportChats() {
+    const data = JSON.stringify(state.chats, null, 2);
+    const blob = new Blob([data], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'macai-chats-' + Date.now() + '.json';
+    a.click();
+    URL.revokeObjectURL(url);
+    toast('Chats exported');
+}
+
+function getActive() { return state.chats[state.activeId]; }
+
+/* ============================================================ */
+/* RENDERING                                                     */
+/* ============================================================ */
+function renderChatList() {
+    const list = document.getElementById('chat-list');
+    const ids = Object.keys(state.chats).sort((a, b) =>
+        (state.chats[b].updatedAt || 0) - (state.chats[a].updatedAt || 0)
+    );
+    if (!ids.length) {
+        list.innerHTML = '<div style="padding:12px 8px; font-size:12px; color:var(--text-muted);">No chats yet</div>';
+        return;
+    }
+    list.innerHTML = ids.map(id => {
+        const c = state.chats[id];
+        const active = id === state.activeId ? ' active' : '';
+        return `<div class="chat-item${active}" onclick="switchChat('${id}')">
+            <span class="chat-item-name">${escapeHtml(c.name)}</span>
+            <button class="chat-item-del" onclick="deleteChat('${id}', event)">✕</button>
+        </div>`;
+    }).join('');
+}
+
+function renderMessages() {
+    const chat = getActive();
+    const box = document.getElementById('messages');
+    if (!chat || !chat.messages.length) {
+        box.innerHTML = `<div class="empty-state">
+            <div class="empty-state-icon">🔥</div>
+            <h2>Mac AI</h2>
+            <p>Chat, or generate images, videos, and music — all in one place.</p>
+            <div class="tip-grid">
+                <div class="tip"><strong>💬 Chat</strong>Ask anything — coding, ideas, questions.</div>
+                <div class="tip"><strong>🎨 Image</strong>Describe it, get it. Try: <em>a dragon on a mountain</em></div>
+                <div class="tip"><strong>🎬 Video</strong>Generate a short clip. Try: <em>ocean waves at sunset</em></div>
+                <div class="tip"><strong>🎵 Music</strong>Make a song. Try: <em>lofi hip-hop beats</em></div>
+            </div>
+        </div>`;
+        return;
+    }
+    box.innerHTML = chat.messages.map((m, i) => renderMessage(m, i)).join('');
+    box.scrollTop = box.scrollHeight;
+}
+
+function renderMessage(m, index) {
+    const isUser = m.role === 'user';
+    const avatar = isUser ? '👤' : '🔥';
+    const role = isUser ? 'You' : 'Mac AI';
+    let content = `<div class="msg-content">${formatMarkdown(m.content || '')}</div>`;
+
+    if (m.imageUrl) content += `<img class="msg-image" src="${m.imageUrl}" alt="Generated" loading="lazy">`;
+    if (m.videoUrl) content += `<video class="msg-video" src="${m.videoUrl}" controls playsinline></video>`;
+    if (m.audioUrl) content += `<audio class="msg-audio" src="${m.audioUrl}" controls></audio>`;
+
+    if (m.progress !== undefined && m.progress < 100) {
+        content += `<div class="progress-wrap">
+            <div class="progress-label">${escapeHtml(m.progressLabel || 'Generating...')}</div>
+            <div class="progress-bar"><div class="progress-fill" style="width:${m.progress}%"></div></div>
+        </div>`;
+    }
+
+    const actions = isUser ? '' : `
+        <div class="msg-actions">
+            <button class="msg-action-btn" onclick="copyMsg(${index})">📋 Copy</button>
+            <button class="msg-action-btn" onclick="regenMsg(${index})">🔄 Regenerate</button>
+            ${m.imageUrl ? `<button class="msg-action-btn" onclick="downloadUrl('${m.imageUrl}', 'image.png')">⬇ Download</button>` : ''}
+            ${m.videoUrl ? `<button class="msg-action-btn" onclick="downloadUrl('${m.videoUrl}', 'video.mp4')">⬇ Download</button>` : ''}
+            ${m.audioUrl ? `<button class="msg-action-btn" onclick="downloadUrl('${m.audioUrl}', 'music.mp3')">⬇ Download</button>` : ''}
+        </div>`;
+
+    return `<div class="msg ${isUser ? 'user' : 'assistant'}">
+        <div class="msg-avatar">${avatar}</div>
+        <div class="msg-body">
+            <div class="msg-role">${role}</div>
+            ${content}
+            ${actions}
+        </div>
+    </div>`;
+}
+
+function updateTitle() {
+    const chat = getActive();
+    document.getElementById('chat-title').textContent = chat ? chat.name : 'New Chat';
+}
+
+function updateInputHint() {
+    const hints = {
+        chat: 'Chat mode — ask anything. Shift+Enter for newline.',
+        image: '🎨 Image mode — describe the image you want.',
+        video: '🎬 Video mode — describe the scene. May take 1–3 minutes.',
+        music: '🎵 Music mode — describe the sound or vibe.'
+    };
+    const placeholders = {
+        chat: 'Ask anything...',
+        image: 'A dragon on a mountain at sunset...',
+        video: 'Ocean waves crashing on rocks...',
+        music: 'Lofi hip-hop with rain sounds...'
+    };
+    document.getElementById('input-hint').textContent = hints[state.mediaMode] || hints.chat;
+    document.getElementById('chat-input').placeholder = placeholders[state.mediaMode] || placeholders.chat;
+}
+
+function setMediaMode(mode) {
+    state.mediaMode = mode;
+    document.querySelectorAll('.mode-tab').forEach(t => {
+        t.classList.toggle('active', t.dataset.mode === mode);
+    });
+    updateInputHint();
+}
+
+/* ============================================================ */
+/* MARKDOWN                                                      */
+/* ============================================================ */
+function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c =>
+        ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+}
+
+function formatMarkdown(text) {
+    if (!text) return '';
+    let s = escapeHtml(text);
+    s = s.replace(/```(\w+)?\n?([\s\S]*?)```/g, (_, lang, code) => `<pre><code>${code.trim()}</code></pre>`);
+    s = s.replace(/`([^`\n]+)`/g, '<code>$1</code>');
+    s = s.replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>');
+    s = s.replace(/(^|[^*])\*([^*\n]+)\*/g, '$1<em>$2</em>');
+    return s;
+}
+
+/* ============================================================ */
+/* SEND DISPATCHER                                               */
+/* ============================================================ */
+async function sendMessage() {
+    if (state.isGenerating) return;
+    const input = document.getElementById('chat-input');
+    const text = input.value.trim();
+    if (!text) return;
+
+    const chat = getActive();
+    if (!chat) return;
+
+    chat.messages.push({ role: 'user', content: text, ts: Date.now() });
+    chat.updatedAt = Date.now();
+    input.value = '';
+    input.style.height = 'auto';
+    saveChats();
+    renderMessages();
+    renderChatList();
+
+    if (state.mediaMode === 'image') {
+        await handleImageGen(chat, text);
+    } else if (state.mediaMode === 'video') {
+        await handleVideoGen(chat, text);
+    } else if (state.mediaMode === 'music') {
+        await handleMusicGen(chat, text);
+    } else {
+        await handleChatResponse(chat);
+    }
+}
+
+/* ============================================================ */
+/* SAFETY CHECK                                                  */
+/* ============================================================ */
+async function isPromptSafe(prompt) {
+    const hfTok = getKey('hfToken');
+    if (!hfTok) return { safe: true, reason: 'no HF token' };
+    try {
+        const res = await fetch(`${HF_INFERENCE_URL}/${HF_SAFETY_MODEL}`, {
+            method: 'POST',
+            headers: {
+                'Authorization': 'Bearer ' + hfTok,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ inputs: prompt.slice(0, 1500) })
+        });
+        if (!res.ok) return { safe: true, reason: 'checker error ' + res.status };
+        let data = await res.json();
+        if (Array.isArray(data) && Array.isArray(data[0])) data = data[0];
+        if (!Array.isArray(data) || !data.length) return { safe: true, reason: 'bad format' };
+        const top = data.reduce((a, b) => (a.score > b.score ? a : b));
+        const label = String(top.label || '').toUpperCase();
+        if (label.includes('NSFW') && top.score >= 0.5) {
+            return { safe: false, reason: `flagged as NSFW (${(top.score * 100).toFixed(0)}%)` };
+        }
+        return { safe: true, reason: 'safe' };
+    } catch (e) {
+        console.warn('Safety check failed:', e);
+        return { safe: true, reason: 'checker unavailable' };
+    }
+}
+
+/* ============================================================ */
+/* IMAGE GENERATION — Provider-driven                            */
+/* ============================================================ */
+async function handleImageGen(chat, prompt) {
+    state.isGenerating = true;
+    setSending(true);
+
+    const msgIndex = chat.messages.length;
+    chat.messages.push({
+        role: 'assistant',
+        content: `🎨 Checking prompt safety...`,
+        progress: 10,
+        progressLabel: 'Running safety check',
+        ts: Date.now(),
+        pending: true
+    });
+    renderMessages();
+
+    try {
+        const check = await isPromptSafe(prompt);
+        if (!check.safe) {
+            chat.messages[msgIndex] = {
+                role: 'assistant',
+                content: `🚫 **Blocked by safety check.**\nReason: ${check.reason}`,
+                ts: Date.now()
+            };
+            finishGen(chat);
+            return;
+        }
+
+        const provider = state.settings.imageProvider || 'pollinations';
+        const model = state.settings.imageModel;
+        chat.messages[msgIndex].content = `🎨 Generating image with **${provider}**...`;
+        chat.messages[msgIndex].progress = 40;
+        chat.messages[msgIndex].progressLabel = 'Rendering';
+        renderMessages();
+
+        let imageUrl = null;
+
+        if (provider === 'pollinations') {
+            const m = model || 'flux';
+            const encoded = encodeURIComponent(prompt);
+            imageUrl = `https://image.pollinations.ai/prompt/${encoded}?width=768&height=768&nologo=true&model=${m}&seed=${Date.now()}`;
+            await preloadImage(imageUrl);
+        } else if (provider === 'hf') {
+            const blob = await generateHFImage(prompt, model);
+            imageUrl = URL.createObjectURL(blob);
+        } else if (provider === 'gemini') {
+            const blob = await generateGeminiImage(prompt, model);
+            imageUrl = URL.createObjectURL(blob);
+        } else {
+            throw new Error('Unknown image provider: ' + provider);
+        }
+
+        chat.messages[msgIndex] = {
+            role: 'assistant',
+            content: `Here's your image for **"${escapeHtml(prompt)}"** *(via ${provider})*`,
+            imageUrl: imageUrl,
+            ts: Date.now()
+        };
+    } catch (e) {
+        chat.messages[msgIndex] = {
+            role: 'assistant',
+            content: `❌ Image generation failed: ${escapeHtml(e.message || 'Unknown error')}`,
+            ts: Date.now()
+        };
+    }
+
+    finishGen(chat);
+    if (state.settings.autoName && !chat.autoNamed) autoNameChat(chat);
+}
+
+function preloadImage(url) {
+    return new Promise((res, rej) => {
+        const img = new Image();
+        img.onload = res;
+        img.onerror = () => rej(new Error('Failed to load image'));
+        img.src = url;
+        setTimeout(() => rej(new Error('Timeout loading image')), 90000);
+    });
+}
+
+async function generateHFImage(prompt, modelId) {
+    const hfTok = getKey('hfToken');
+    if (!hfTok) throw new Error('HuggingFace token required for HF image generation');
+    const models = modelId ? [modelId, ...IMAGE_MODELS.hf.map(m => m.id).filter(m => m !== modelId)] : IMAGE_MODELS.hf.map(m => m.id);
+    let lastErr = null;
+    for (const m of models) {
+        try {
+            const res = await fetch(`${HF_INFERENCE_URL}/${m}`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer ' + hfTok,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ inputs: prompt }),
+                signal: AbortSignal.timeout(120000)
+            });
+            if (res.status === 401 || res.status === 403) throw new Error('HF auth error ' + res.status);
+            if (!res.ok) { lastErr = `HF ${m}: ${res.status}`; continue; }
+            const blob = await res.blob();
+            if (blob.size < 500) { lastErr = `HF ${m}: empty response`; continue; }
+            // Remember working model
+            state.settings.imageModel = m;
+            return blob;
+        } catch (e) { lastErr = `${m}: ${e.message}`; continue; }
+    }
+    throw new Error('All HF models failed. ' + (lastErr || ''));
+}
+
+async function generateGeminiImage(prompt, modelId) {
+    const apiKey = getKey('geminiImage') || getKey('gemini');
+    if (!apiKey) throw new Error('Gemini API key required for image generation');
+    const model = modelId || 'imagen-3.0-generate-002';
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:predict?key=${apiKey}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            instances: [{ prompt: prompt }],
+            parameters: { sampleCount: 1 }
+        })
+    });
+    if (!res.ok) {
+        const err = await res.text();
+        throw new Error(`Gemini image ${res.status}: ${err.slice(0, 150)}`);
+    }
+    const data = await res.json();
+    const b64 = data.predictions?.[0]?.bytesBase64Encoded || data.predictions?.[0]?.image?.imageBytes;
+    if (!b64) throw new Error('No image data from Gemini');
+    // Convert base64 → blob
+    const binary = atob(b64);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+    return new Blob([bytes], { type: 'image/png' });
+}
+
+/* ============================================================ */
+/* VIDEO GENERATION — SiliconFlow                                */
+/* ============================================================ */
+async function handleVideoGen(chat, prompt) {
+    state.isGenerating = true;
+    setSending(true);
+
+    const sfKeys = [getKey('siliconflow'), getKey('siliconflow2'), getKey('siliconflow3')].filter(Boolean);
+    if (!sfKeys.length) {
+        chat.messages.push({
+            role: 'assistant',
+            content: '❌ No SiliconFlow API key configured. Add one in ⚙️ Settings.',
+            ts: Date.now()
+        });
+        finishGen(chat);
+        return;
+    }
+
+    const msgIndex = chat.messages.length;
+    chat.messages.push({
+        role: 'assistant',
+        content: `🎬 **Video generation started**\nPrompt: *${escapeHtml(prompt)}*\n\nThis usually takes 1–3 minutes.`,
+        progress: 5,
+        progressLabel: 'Submitting job',
+        ts: Date.now(),
+        pending: true
+    });
+    renderMessages();
+
+    const updateProgress = (pct, label) => {
+        const m = chat.messages[msgIndex];
+        m.progress = pct;
+        m.progressLabel = label;
+        renderMessages();
+    };
+
+    try {
+        const submitUrl = 'https://api.siliconflow.com/v1/video/submit';
+        const statusUrl = 'https://api.siliconflow.com/v1/video/status';
+        let apiKey = sfKeys[state.sfKeyIndex % sfKeys.length];
+        state.sfKeyIndex++;
+
+        updateProgress(15, 'Submitting job to SiliconFlow...');
+        let requestId = null;
+        for (let attempt = 0; attempt < sfKeys.length + 1; attempt++) {
+            const res = await fetch(submitUrl, {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer ' + apiKey,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    model: 'Wan-AI/Wan2.2-T2V-A14B',
+                    prompt: prompt,
+                    image_size: '1280x720'
+                })
+            });
+            if (res.status === 200) {
+                const data = await res.json();
+                requestId = data.requestId;
+                if (requestId) break;
+            } else if (res.status === 429) {
+                apiKey = sfKeys[(state.sfKeyIndex) % sfKeys.length];
+                state.sfKeyIndex++;
+                await new Promise(r => setTimeout(r, 2000));
+                continue;
+            } else {
+                const err = await res.text();
+                throw new Error(`Submit failed: ${res.status} — ${err.slice(0, 150)}`);
+            }
+        }
+
+        if (!requestId) throw new Error('No request ID returned');
+        updateProgress(20, 'Job queued. Waiting for processing...');
+
+        const MAX_POLLS = 120;
+        for (let i = 0; i < MAX_POLLS; i++) {
+            await new Promise(r => setTimeout(r, 8000));
+            const res = await fetch(statusUrl, {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer ' + apiKey,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ requestId })
+            });
+            if (res.status === 429) {
+                apiKey = sfKeys[(state.sfKeyIndex) % sfKeys.length];
+                state.sfKeyIndex++;
+                continue;
+            }
+            if (res.status !== 200) continue;
+
+            const data = await res.json();
+            const status = data.status;
+            if (status === 'Succeed') {
+                const videos = data.results?.videos || [];
+                if (videos.length && (videos[0].url || videos[0].video_url)) {
+                    const videoUrl = videos[0].url || videos[0].video_url;
+                    updateProgress(100, 'Complete!');
+                    chat.messages[msgIndex] = {
+                        role: 'assistant',
+                        content: `🎬 **Video ready!**\nPrompt: *${escapeHtml(prompt)}*`,
+                        videoUrl: videoUrl,
+                        ts: Date.now()
+                    };
+                    finishGen(chat);
+                    return;
+                }
+                throw new Error('No video URL in response');
+            } else if (status === 'Failed') {
+                throw new Error(`Job failed: ${data.reason || 'unknown'}`);
+            }
+            const pct = Math.min(90, 20 + (i / MAX_POLLS) * 70);
+            updateProgress(pct, `Status: ${status} • ${i + 1}/${MAX_POLLS}`);
+        }
+        throw new Error('Timed out waiting for video');
+    } catch (e) {
+        chat.messages[msgIndex] = {
+            role: 'assistant',
+            content: `❌ Video generation failed: ${escapeHtml(e.message || 'Unknown error')}`,
+            ts: Date.now()
+        };
+        finishGen(chat);
+    }
+}
+
+/* ============================================================ */
+/* MUSIC GENERATION — Pollinations Audio                         */
+/* ============================================================ */
+async function handleMusicGen(chat, prompt) {
+    state.isGenerating = true;
+    setSending(true);
+
+    const msgIndex = chat.messages.length;
+    chat.messages.push({
+        role: 'assistant',
+        content: `🎵 Generating music...\nPrompt: *${escapeHtml(prompt)}*`,
+        progress: 30,
+        progressLabel: 'Composing audio',
+        ts: Date.now(),
+        pending: true
+    });
+    renderMessages();
+
+    try {
+        const url = 'https://gen.pollinations.ai/audio/' + encodeURIComponent(prompt);
+        const headers = { 'User-Agent': 'MacAI/1.0' };
+        const pollKey = getKey('pollinations');
+        if (pollKey) headers['Authorization'] = 'Bearer ' + pollKey;
+
+        const res = await fetch(url, { headers });
+        if (!res.ok) {
+            const txt = await res.text();
+            throw new Error(`API ${res.status}: ${txt.slice(0, 100)}`);
+        }
+        const blob = await res.blob();
+        if (blob.size < 1000) throw new Error('Audio too small — generation failed');
+        const audioUrl = URL.createObjectURL(blob);
+
+        chat.messages[msgIndex] = {
+            role: 'assistant',
+            content: `🎵 **Music ready!**\nPrompt: *${escapeHtml(prompt)}*`,
+            audioUrl: audioUrl,
+            ts: Date.now()
+        };
+    } catch (e) {
+        chat.messages[msgIndex] = {
+            role: 'assistant',
+            content: `❌ Music generation failed: ${escapeHtml(e.message || 'Unknown error')}`,
+            ts: Date.now()
+        };
+    }
+
+    finishGen(chat);
+}
+
+/* ============================================================ */
+/* CHAT — Provider-driven                                        */
+/* ============================================================ */
+async function handleChatResponse(chat) {
+    state.isGenerating = true;
+    setSending(true);
+
+    const msgIndex = chat.messages.length;
+    chat.messages.push({ role: 'assistant', content: '', pending: true, ts: Date.now() });
+    renderMessages();
+
+    try {
+        const sysPrompt = chat.systemPrompt || state.settings.systemPrompt;
+        const systemMsgs = sysPrompt ? [{ role: 'system', content: sysPrompt }] : [];
+
+        let searchContext = '';
+        if (state.searchEnabled && chat.messages.length >= 2) {
+            const lastUser = [...chat.messages].reverse().find(m => m.role === 'user' && !m.pending);
+            if (lastUser && lastUser.content) {
+                try {
+                    const results = await webSearch(lastUser.content);
+                    if (results) searchContext = `\n\n[Web search results for "${lastUser.content}"]:\n${results}\n[End of search results]`;
+                } catch (e) { console.warn('Search failed', e); }
+            }
+        }
+
+        const history = chat.messages
+            .filter(m => !m.pending && !m.imageUrl && !m.videoUrl && !m.audioUrl)
+            .slice(0, -1)
+            .map(m => ({ role: m.role, content: m.content }));
+
+        if (searchContext && history.length) {
+            history[history.length - 1].content += searchContext;
+        }
+
+        const payload = [...systemMsgs, ...history];
+
+        const provider = state.settings.chatProvider || 'gemini';
+        const model = state.settings.chatModel;
+        let reply = null;
+        let lastErr = null;
+
+        // Try selected provider first, then fallbacks
+        if (provider === 'gemini') {
+            try { reply = await callGemini(payload, sysPrompt, model); }
+            catch (e) { lastErr = e; console.warn('Gemini fail', e); }
+            if (!reply) {
+                try { reply = await callGroq(payload, getKey('groq'), model); }
+                catch (e) { console.warn('Groq fallback fail', e); }
+            }
+        } else if (provider === 'groq') {
+            try { reply = await callGroq(payload, getKey('groq'), model); }
+            catch (e) { lastErr = e; console.warn('Groq fail', e); }
+            if (!reply) {
+                try { reply = await callGemini(payload, sysPrompt); }
+                catch (e) { console.warn('Gemini fallback fail', e); }
+            }
+        } else if (provider === 'pollinations') {
+            try { reply = await callPollinations(payload, model); }
+            catch (e) { lastErr = e; console.warn('Pollinations fail', e); }
+        }
+
+        // Final fallback — Pollinations
+        if (!reply) {
+            try { reply = await callPollinations(payload); }
+            catch (e) { lastErr = e; }
+        }
+
+        if (!reply) throw lastErr || new Error('All backends failed. Add a key in Settings.');
+
+        chat.messages[msgIndex] = { role: 'assistant', content: reply, ts: Date.now() };
+    } catch (e) {
+        chat.messages[msgIndex] = {
+            role: 'assistant',
+            content: `❌ **Error:** ${escapeHtml(e.message || 'Something went wrong.')}`,
+            ts: Date.now()
+        };
+    }
+
+    finishGen(chat);
+    if (state.settings.autoName && !chat.autoNamed && chat.messages.length >= 2) {
+        autoNameChat(chat);
+    }
+}
+
+/* ============================================================ */
+/* API BACKENDS                                                  */
+/* ============================================================ */
+async function callGroq(messages, key, model) {
+    const useModel = model && model.startsWith('openai/') || model && model.startsWith('groq/') || model && model.startsWith('qwen/')
+        ? model
+        : 'openai/gpt-oss-120b';
+    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + key
+        },
+        body: JSON.stringify({
+            model: useModel,
+            messages,
+            temperature: 0.7,
+            max_tokens: 2048
+        })
+    });
+    if (!res.ok) {
+        const err = await res.text();
+        throw new Error('Groq ' + res.status + ': ' + err.slice(0, 200));
+    }
+    const data = await res.json();
+    return data.choices?.[0]?.message?.content || '';
+}
+
+async function callGemini(messages, systemPrompt, model) {
+    const useModel = model && model.startsWith('gemini-')
+        ? model
+        : 'gemini-2.0-flash-exp';
+    const contents = messages
+        .filter(m => m.role !== 'system')
+        .map(m => ({
+            role: m.role === 'user' ? 'user' : 'model',
+            parts: [{ text: m.content }]
+        }));
+    const body = {
+        contents,
+        systemInstruction: systemPrompt ? { parts: [{ text: systemPrompt }] } : undefined,
+        generationConfig: { temperature: 0.7, maxOutputTokens: 2048 }
+    };
+    const res = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${useModel}:generateContent?key=${getKey('gemini')}`,
+        { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }
+    );
+    if (!res.ok) {
+        const err = await res.text();
+        throw new Error('Gemini ' + res.status + ': ' + err.slice(0, 150));
+    }
+    const data = await res.json();
+    return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+}
+
+async function callPollinations(messages, model) {
+    const useModel = model || 'openai';
+    const res = await fetch('https://text.pollinations.ai/openai', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ model: useModel, messages, temperature: 0.7, max_tokens: 2048 })
+    });
+    if (!res.ok) throw new Error('Pollinations ' + res.status);
+    const data = await res.json();
+    return data.choices?.[0]?.message?.content || data.choices?.[0]?.text || '';
+}
+
+/* ============================================================ */
+/* WEB SEARCH                                                    */
+/* ============================================================ */
+async function webSearch(query) {
+    try {
+        const res = await fetch('https://s.jina.ai/' + encodeURIComponent(query), {
+            headers: { 'Accept': 'text/plain' }
+        });
+        if (!res.ok) return '';
+        return (await res.text()).slice(0, 4000);
+    } catch (e) { return ''; }
+}
+
+function toggleSearch() {
+    state.searchEnabled = !state.searchEnabled;
+    document.getElementById('search-toggle').classList.toggle('active', state.searchEnabled);
+    toast(state.searchEnabled ? '🌐 Web search ON' : '🌐 Web search OFF');
+}
+
+/* ============================================================ */
+/* AUTO-NAME                                                     */
+/* ============================================================ */
+async function autoNameChat(chat) {
+    if (!chat || chat.autoNamed) return;
+    const firstUser = chat.messages.find(m => m.role === 'user');
+    if (!firstUser || !firstUser.content) return;
+
+    try {
+        const prompt = `Generate a short 3-4 word title for a chat that starts with this message. Only output the title, nothing else. No quotes.\n\nMessage: "${firstUser.content.slice(0, 300)}"`;
+        const payload = [{ role: 'user', content: prompt }];
+        let title = '';
+        // Try Gemini first, then Groq, then Pollinations
+        try { title = await callGemini(payload); } catch {}
+        if (!title) try { title = await callGroq(payload, getKey('groq')); } catch {}
+        if (!title) try { title = await callPollinations(payload); } catch {}
+
+        if (title) {
+            title = title.replace(/["'`.]/g, '').trim().split('\n')[0].slice(0, 40);
+            if (title) {
+                chat.name = title;
+                chat.autoNamed = true;
+                saveChats();
+                renderChatList();
+                updateTitle();
+            }
+        }
+    } catch (e) { console.warn('Auto-name failed', e); }
+}
+
+/* ============================================================ */
+/* ACTIONS                                                       */
+/* ============================================================ */
+function copyMsg(index) {
+    const chat = getActive();
+    if (!chat || !chat.messages[index]) return;
+    navigator.clipboard.writeText(chat.messages[index].content || '');
+    toast('📋 Copied');
+}
+
+async function regenMsg(index) {
+    const chat = getActive();
+    if (!chat) return;
+    const removed = chat.messages.slice(index);
+    const lastUser = [...chat.messages.slice(0, index)].reverse().find(m => m.role === 'user');
+    if (!lastUser) return;
+
+    chat.messages = chat.messages.slice(0, index);
+    saveChats();
+    renderMessages();
+
+    if (removed[0]?.videoUrl) await handleVideoGen(chat, lastUser.content);
+    else if (removed[0]?.audioUrl) await handleMusicGen(chat, lastUser.content);
+    else if (removed[0]?.imageUrl) await handleImageGen(chat, lastUser.content);
+    else await handleChatResponse(chat);
+}
+
+function downloadUrl(url, filename) {
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.target = '_blank';
+    a.click();
+}
+
+/* ============================================================ */
+/* SETTINGS                                                      */
+/* ============================================================ */
+function openSettings() {
+    applySettingsToUI();
+    document.getElementById('settings-modal').classList.add('active');
+}
+
+function closeSettings() {
+    document.getElementById('settings-modal').classList.remove('active');
+}
+
+function populateModels(provider, targetId, selected) {
+    const list = provider === 'gemini' ? CHAT_MODELS.gemini
+        : provider === 'groq' ? CHAT_MODELS.groq
+        : CHAT_MODELS.pollinations;
+    const sel = document.getElementById(targetId);
+    sel.innerHTML = list.map(m =>
+        `<option value="${m.id}"${m.id === selected ? ' selected' : ''}>${m.name}</option>`
+    ).join('');
+}
+
+function populateImageModels(provider, targetId, selected) {
+    const list = IMAGE_MODELS[provider] || IMAGE_MODELS.pollinations;
+    const sel = document.getElementById(targetId);
+    sel.innerHTML = list.map(m =>
+        `<option value="${m.id}"${m.id === selected ? ' selected' : ''}>${m.name}</option>`
+    ).join('');
+}
+
+function onChatProviderChange() {
+    const provider = document.getElementById('set-chat-provider').value;
+    const defaults = { gemini: 'gemini-2.0-flash-exp', groq: 'openai/gpt-oss-120b', pollinations: 'openai' };
+    populateModels(provider, 'set-chat-model', defaults[provider]);
+}
+
+function onImageProviderChange() {
+    const provider = document.getElementById('set-image-provider').value;
+    const defaults = { pollinations: 'flux', hf: 'Tongyi-MAI/Z-Image-Turbo', gemini: 'imagen-3.0-generate-002' };
+    populateImageModels(provider, 'set-image-model', defaults[provider]);
+}
+
+function applySettingsToUI() {
+    document.getElementById('user-groq').value = state.settings.userGroq || '';
+    document.getElementById('user-gemini').value = state.settings.userGemini || '';
+    document.getElementById('user-hf').value = state.settings.userHF || '';
+    document.getElementById('user-sf').value = state.settings.userSF || '';
+
+    document.getElementById('set-chat-provider').value = state.settings.chatProvider || 'gemini';
+    populateModels(state.settings.chatProvider || 'gemini', 'set-chat-model', state.settings.chatModel);
+
+    document.getElementById('set-image-provider').value = state.settings.imageProvider || 'pollinations';
+    populateImageModels(state.settings.imageProvider || 'pollinations', 'set-image-model', state.settings.imageModel);
+
+    document.getElementById('set-prompt').value = state.settings.systemPrompt || '';
+    document.getElementById('set-autoname').checked = state.settings.autoName !== false;
+}
+
+function saveSettings() {
+    state.settings.userGroq = document.getElementById('user-groq').value.trim();
+    state.settings.userGemini = document.getElementById('user-gemini').value.trim();
+    state.settings.userHF = document.getElementById('user-hf').value.trim();
+    state.settings.userSF = document.getElementById('user-sf').value.trim();
+
+    state.settings.chatProvider = document.getElementById('set-chat-provider').value;
+    state.settings.chatModel = document.getElementById('set-chat-model').value;
+    state.settings.imageProvider = document.getElementById('set-image-provider').value;
+    state.settings.imageModel = document.getElementById('set-image-model').value;
+
+    state.settings.systemPrompt = document.getElementById('set-prompt').value;
+    state.settings.autoName = document.getElementById('set-autoname').checked;
+
+    localStorage.setItem(STORAGE_SETTINGS, JSON.stringify(state.settings));
+    closeSettings();
+    toast('✅ Settings saved');
+}
+
+function applyPreset(key) {
+    document.getElementById('set-prompt').value = PRESETS[key] || '';
+}
+
+/* ============================================================ */
+/* UTILS                                                         */
+/* ============================================================ */
+function setSending(on) {
+    document.getElementById('send-btn').disabled = on;
+}
+
+function finishGen(chat) {
+    chat.updatedAt = Date.now();
+    saveChats();
+    renderMessages();
+    state.isGenerating = false;
+    setSending(false);
+}
+
+function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(t._timer);
+    t._timer = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+/* ============================================================ */
+/* BOOT                                                          */
+/* ============================================================ */
+init();
+</script>
+</body>
+</html>
