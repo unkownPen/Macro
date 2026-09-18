@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Creamo-OS V1</title>
+  <title>Macro-OS V1</title>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@900&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" defer></script>
@@ -28,9 +28,9 @@
 
 <section id="boot-layer" aria-label="System Boot Sequence">
   <div id="boot-content">
-    <h1 class="boot-logo">CREAMO-OS</h1>
+    <h1 class="boot-logo">MACRO-OS</h1>
     <p class="boot-sub">Cine-Hub Softwares // V1</p>
-    <button id="boot-btn" onclick="startBootSequence()" tabindex="1">Enter CREAMO</button>
+    <button id="boot-btn" onclick="startBootSequence()" tabindex="1">Enter MACRO</button>
     <div class="boot__hint">Double-Tap ENTER to skip sequence</div>
   </div>
   <video id="boot-video" playsinline aria-hidden="true"><source src="Videos/Boot.mp4" type="video/mp4"></video>
@@ -144,7 +144,8 @@
       <div class="user-avatar"><i class="fas fa-user" aria-hidden="true"></i></div>
       <span class="user-role">Administrator</span>
     </div>
-    <i class="fas fa-power-off power-btn" role="button" tabindex="0" onclick="location.reload()" aria-label="Restart OS"></i>
+    <!-- POWER BUTTON REDIRECTS TO MACROX.PAGES.DEV -->
+    <i class="fas fa-power-off power-btn" role="button" tabindex="0" onclick="window.location.href='https://macrox.pages.dev'" aria-label="Back to Macro"></i>
   </footer>
 </aside>
 
@@ -337,7 +338,7 @@
       <div class="config__text"><strong>Tab Cloak</strong><small>Disguises the OS tab name and icon</small></div>
     </div>
     <select class="config__select" id="cloak-select" onchange="window.parent.updateCloak(this.value)">
-      <option value="none">None (Creamo-OS)</option>
+      <option value="none">None (Macro-OS)</option>
       <option value="google">Google</option>
       <option value="drive">Google Drive</option>
       <option value="canvas">Canvas</option>
@@ -370,6 +371,7 @@
   </div>
 </template>
 
+<!-- CRITICAL FIX: Linking the OS script -->
 <script src="script.js"></script>
 </body>
 </html>
