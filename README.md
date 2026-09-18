@@ -1,19 +1,19 @@
-# 🚀 Creamo
+# 🚀 Macro
 
-Creamo is a modern web platform with a clean futuristic design, smooth animations, and multiple sections accessible through a simple navigation bar. It’s built to be fast, lightweight, and easy to use across devices.
+Macro is a modern web platform with a clean futuristic design, smooth animations, and multiple sections accessible through a simple navigation bar. It’s built to be fast, lightweight, and easy to use across devices.
 
 ---
 
 ## 🌐 Overview
 
-Creamo includes different sections and pages connected through the navbar. Users can move between features easily without complicated setup. The site focuses on design, responsiveness, and a smooth experience.
+Macro includes different sections and pages connected through the navbar. Users can move between features easily without complicated setup. The site focuses on design, responsiveness, and a smooth experience.
 
 ---
 
 ## 🔗 Live URLs
 
-- https://creamo.pages.dev  
-- https://creamo.qzz.io  
+- https://macrox.pages.dev 
+- https://creamo.qzz.io  - shit alterantive
 
 ---
 
